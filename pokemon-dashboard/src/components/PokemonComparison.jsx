@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
+import PokemonSelect from './PokemonSelect';
 import './PokemonComparison.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -96,17 +97,14 @@ function PokemonComparison() {
 
         <div className="controls">
           <div className="pokemon-selector">
-            <label htmlFor="pokemon1-select">Pokemon 1:</label>
-            <select
+            <PokemonSelect
               id="pokemon1-select"
+              label="Pokemon 1"
               value={pokemon1}
-              onChange={(e) => setPokemon1(e.target.value)}
-              className="pokemon-select pokemon1-select"
-            >
-              {allPokemon.map(name => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
+              options={allPokemon}
+              onChange={setPokemon1}
+              className="pokemon1-combobox"
+            />
             <button onClick={handleRandomPokemon1} className="random-btn random-btn-1">
               Random
             </button>
@@ -118,17 +116,14 @@ function PokemonComparison() {
           </button>
 
           <div className="pokemon-selector">
-            <label htmlFor="pokemon2-select">Pokemon 2:</label>
-            <select
+            <PokemonSelect
               id="pokemon2-select"
+              label="Pokemon 2"
               value={pokemon2}
-              onChange={(e) => setPokemon2(e.target.value)}
-              className="pokemon-select pokemon2-select"
-            >
-              {allPokemon.map(name => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
+              options={allPokemon}
+              onChange={setPokemon2}
+              className="pokemon2-combobox"
+            />
             <button onClick={handleRandomPokemon2} className="random-btn random-btn-2">
               Random
             </button>
