@@ -51,9 +51,12 @@ function PokemonComparison() {
         value2: response.data.pokemon2.stats[idx]
       }));
 
+      // Store the names used to key the chartData so rendering is always in sync
       setComparisonData({
         ...response.data,
-        chartData
+        chartData,
+        p1Name: pokemon1,
+        p2Name: pokemon2,
       });
     } catch {
       setError(`Failed to load comparison. Please try again.`);
@@ -189,15 +192,15 @@ function PokemonComparison() {
                 <PolarAngleAxis dataKey="stat" />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} />
                 <Radar
-                  name={pokemon1}
-                  dataKey={pokemon1}
+                  name={comparisonData.p1Name}
+                  dataKey={comparisonData.p1Name}
                   stroke="#e74c3c"
                   fill="#e74c3c"
                   fillOpacity={0.3}
                 />
                 <Radar
-                  name={pokemon2}
-                  dataKey={pokemon2}
+                  name={comparisonData.p2Name}
+                  dataKey={comparisonData.p2Name}
                   stroke="#3498db"
                   fill="#3498db"
                   fillOpacity={0.3}
@@ -222,15 +225,15 @@ function PokemonComparison() {
               <tbody>
                 {comparisonData.chartData.map((row, idx) => {
                   const diff = row.value1 - row.value2;
-                  const percentileDiff = row[pokemon1] - row[pokemon2];
+                  const percentileDiff = row[comparisonData.p1Name] - row[comparisonData.p2Name];
                   return (
                     <tr key={idx}>
                       <td><strong>{row.stat}</strong></td>
                       <td className="pokemon1-col">
-                        {row.value1} ({row[pokemon1].toFixed(1)}%)
+                        {row.value1} ({row[comparisonData.p1Name].toFixed(1)}%)
                       </td>
                       <td className="pokemon2-col">
-                        {row.value2} ({row[pokemon2].toFixed(1)}%)
+                        {row.value2} ({row[comparisonData.p2Name].toFixed(1)}%)
                       </td>
                       <td className={diff > 0 ? 'positive' : diff < 0 ? 'negative' : 'neutral'}>
                         {diff > 0 ? '+' : ''}{diff} ({percentileDiff > 0 ? '+' : ''}{percentileDiff.toFixed(1)}%)
