@@ -11,6 +11,7 @@ function PokemonComparison() {
   const [pokemon2, setPokemon2] = useState('');
   const [comparisonData, setComparisonData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Load all pokemon names on mount
   useEffect(() => {
@@ -22,7 +23,7 @@ function PokemonComparison() {
           setPokemon2(response.data[1]);
         }
       })
-      .catch(error => console.error('Error loading pokemon list:', error));
+      .catch(() => setError('Could not load Pokémon list. Is the server running?'));
   }, []);
 
   // Load comparison when both pokemon are selected
@@ -34,6 +35,7 @@ function PokemonComparison() {
 
   const loadComparison = async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await axios.post(`${API_BASE_URL}/pokemon/compare`, {
         pokemon1,
@@ -53,8 +55,8 @@ function PokemonComparison() {
         ...response.data,
         chartData
       });
-    } catch (error) {
-      console.error('Error loading comparison:', error);
+    } catch {
+      setError(`Failed to load comparison. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -64,8 +66,8 @@ function PokemonComparison() {
     try {
       const response = await axios.get(`${API_BASE_URL}/pokemon/random`);
       setPokemon1(response.data.name);
-    } catch (error) {
-      console.error('Error getting random pokemon:', error);
+    } catch {
+      setError('Could not fetch a random Pokémon. Please try again.');
     }
   };
 
@@ -73,8 +75,8 @@ function PokemonComparison() {
     try {
       const response = await axios.get(`${API_BASE_URL}/pokemon/random`);
       setPokemon2(response.data.name);
-    } catch (error) {
-      console.error('Error getting random pokemon:', error);
+    } catch {
+      setError('Could not fetch a random Pokémon. Please try again.');
     }
   };
 
@@ -83,10 +85,6 @@ function PokemonComparison() {
     setPokemon1(pokemon2);
     setPokemon2(temp);
   };
-
-  if (loading) {
-    return <div className="loading">Loading comparison...</div>;
-  }
 
   return (
     <div className="pokemon-comparison">
@@ -132,7 +130,13 @@ function PokemonComparison() {
         </div>
       </header>
 
-      {comparisonData && (
+      {error && (
+        <div className="error-banner" role="alert">{error}</div>
+      )}
+
+      {loading && <div className="loading">Loading comparison...</div>}
+
+      {!loading && !error && comparisonData && (
         <div className="comparison-content">
           {/* Pokemon Headers with Images */}
           <div className="pokemon-headers">

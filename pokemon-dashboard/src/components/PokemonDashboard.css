@@ -149,6 +149,16 @@
   color: #7f8c8d;
 }
 
+.error-banner {
+  background-color: #fdecea;
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  color: #c0392b;
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  font-size: 1em;
+}
+
 @media (max-width: 968px) {
   .content-grid {
     grid-template-columns: 1fr;

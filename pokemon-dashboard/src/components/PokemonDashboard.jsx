@@ -11,6 +11,7 @@ function PokemonDashboard() {
   const [pokemonData, setPokemonData] = useState(null);
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Load all pokemon names on mount
   useEffect(() => {
@@ -21,7 +22,7 @@ function PokemonDashboard() {
           setSelectedPokemon(response.data[0]);
         }
       })
-      .catch(error => console.error('Error loading pokemon list:', error));
+      .catch(() => setError('Could not load Pokémon list. Is the server running?'));
   }, []);
 
   // Load selected pokemon data
@@ -33,6 +34,7 @@ function PokemonDashboard() {
 
   const loadPokemonData = async (name) => {
     setLoading(true);
+    setError(null);
     try {
       const [dataResponse, statsResponse] = await Promise.all([
         axios.get(`${API_BASE_URL}/pokemon/${name}`),
@@ -49,8 +51,8 @@ function PokemonDashboard() {
       }));
 
       setStatsData(formattedStats);
-    } catch (error) {
-      console.error('Error loading pokemon data:', error);
+    } catch {
+      setError(`Failed to load data for ${name}. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -60,14 +62,10 @@ function PokemonDashboard() {
     try {
       const response = await axios.get(`${API_BASE_URL}/pokemon/random`);
       setSelectedPokemon(response.data.name);
-    } catch (error) {
-      console.error('Error getting random pokemon:', error);
+    } catch {
+      setError('Could not fetch a random Pokémon. Please try again.');
     }
   };
-
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
 
   return (
     <div className="pokemon-dashboard">
@@ -91,7 +89,13 @@ function PokemonDashboard() {
         </div>
       </header>
 
-      {pokemonData && (
+      {error && (
+        <div className="error-banner" role="alert">{error}</div>
+      )}
+
+      {loading && <div className="loading">Loading...</div>}
+
+      {!loading && !error && pokemonData && (
         <div className="pokemon-details">
           <div className="pokemon-header">
             <h2>{pokemonData.Name}</h2>
