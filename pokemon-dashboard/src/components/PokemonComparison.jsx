@@ -93,8 +93,9 @@ function PokemonComparison() {
 
         <div className="controls">
           <div className="pokemon-selector">
-            <label>Pokemon 1:</label>
+            <label htmlFor="pokemon1-select">Pokemon 1:</label>
             <select
+              id="pokemon1-select"
               value={pokemon1}
               onChange={(e) => setPokemon1(e.target.value)}
               className="pokemon-select pokemon1-select"
@@ -108,13 +109,15 @@ function PokemonComparison() {
             </button>
           </div>
 
-          <button onClick={handleSwap} className="swap-btn" title="Swap Pokemon">
-            ⇄
+          {/* JEF-76: aria-label instead of title for screen reader support */}
+          <button onClick={handleSwap} className="swap-btn" aria-label="Swap Pokémon">
+            <span aria-hidden="true">⇄</span>
           </button>
 
           <div className="pokemon-selector">
-            <label>Pokemon 2:</label>
+            <label htmlFor="pokemon2-select">Pokemon 2:</label>
             <select
+              id="pokemon2-select"
               value={pokemon2}
               onChange={(e) => setPokemon2(e.target.value)}
               className="pokemon-select pokemon2-select"
@@ -135,6 +138,12 @@ function PokemonComparison() {
       )}
 
       {loading && <div className="loading">Loading comparison...</div>}
+
+      {!loading && pokemon1 && pokemon2 && pokemon1 === pokemon2 && (
+        <div className="comparison-hint">
+          Select two different Pokémon to compare.
+        </div>
+      )}
 
       {!loading && !error && comparisonData && (
         <div className="comparison-content">

@@ -264,6 +264,16 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.comparison-hint {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1em;
+  color: #7f8c8d;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .loading {
   text-align: center;
   padding: 50px;
