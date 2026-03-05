@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import './PokemonDashboard.css';
@@ -14,20 +15,27 @@ function EvoLink({ name, onClick }) {
 }
 
 function PokemonDashboard() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [allPokemon, setAllPokemon] = useState([]);
-  const [selectedPokemon, setSelectedPokemon] = useState('');
   const [pokemonData, setPokemonData] = useState(null);
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load all pokemon names on mount
+  const selectedPokemon = searchParams.get('pokemon') || '';
+
+  const setSelectedPokemon = (name) => {
+    setSearchParams({ pokemon: name }, { replace: true });
+  };
+
+  // Load all pokemon names on mount; if no ?pokemon= param, default to first
   useEffect(() => {
     axios.get(`${API_BASE_URL}/pokemon`)
       .then(response => {
         setAllPokemon(response.data);
-        if (response.data.length > 0) {
-          setSelectedPokemon(response.data[0]);
+        if (!searchParams.get('pokemon') && response.data.length > 0) {
+          setSearchParams({ pokemon: response.data[0] }, { replace: true });
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
@@ -104,6 +112,12 @@ function PokemonDashboard() {
         <div className="pokemon-details">
           <div className="pokemon-header">
             <h2>{pokemonData.Name}</h2>
+            <button
+              className="compare-btn"
+              onClick={() => navigate(`/compare?p1=${encodeURIComponent(selectedPokemon)}`)}
+            >
+              Compare this Pokémon
+            </button>
             <p className="pokedex-number">Pokedex #{String(pokemonData['Pokedex Number']).padStart(4, '0')}</p>
             <p className="pokemon-type">
               Type: {pokemonData['Type 1']}
