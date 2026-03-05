@@ -259,6 +259,21 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.evolution-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #3498db;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+.evolution-link:hover {
+  color: #2980b9;
+}
+
 .loading {
   text-align: center;
   padding: 50px;
