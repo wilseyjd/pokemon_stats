@@ -7,10 +7,68 @@ import './PokemonComparison.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-function EvoLink({ name, onClick }) {
-  if (!name) return <span>None</span>;
+const TYPE_COLORS = {
+  Normal: '#A8A878', Fire: '#F08030', Water: '#6890F0',
+  Electric: '#F8D030', Grass: '#78C850', Ice: '#98D8D8',
+  Fighting: '#C03028', Poison: '#A040A0', Ground: '#E0C068',
+  Flying: '#A890F0', Psychic: '#F85888', Bug: '#A8B820',
+  Rock: '#B8A038', Ghost: '#705898', Dragon: '#7038F8',
+  Dark: '#705848', Steel: '#B8B8D0', Fairy: '#EE99AC',
+};
+
+function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClick }) {
+  const headerBg = TYPE_COLORS[pokemon.type1] || accentColor;
   return (
-    <button className="evolution-link" onClick={() => onClick(name)}>{name}</button>
+    <div className="pokemon-card" style={{ borderColor: accentColor }}>
+      <div className="card-header" style={{ backgroundColor: headerBg }}>
+        <div className="card-header-top">
+          {pokemon.evolve_from
+            ? <button className="evolution-link card-prev-evo" onClick={() => onEvoClick(pokemon.evolve_from)}>← {pokemon.evolve_from}</button>
+            : <span />
+          }
+          <span className="card-hp">HP {pokemon.stats[0]}</span>
+        </div>
+        <h2 className="card-name">{pokemon.name}</h2>
+        <p className="card-pokedex">#{String(pokemon.pokedex_number).padStart(4, '0')}</p>
+      </div>
+
+      <div className="card-image">
+        <img src={pokemon.image} alt={pokemon.name} />
+      </div>
+
+      <div className="card-types">
+        {[pokemon.type1, pokemon.type2].filter(Boolean).map(type => (
+          <span key={type} className="type-badge" style={{ backgroundColor: TYPE_COLORS[type] || '#888' }}>
+            {type}
+          </span>
+        ))}
+      </div>
+
+      <div className="card-stats">
+        {statLabels.map((label, i) => (
+          <div key={label} className="stat-row">
+            <span className="stat-label">{label}</span>
+            <div className="stat-bar-wrap">
+              <div className="stat-bar-fill" style={{ width: `${pokemon.percentiles[i]}%`, backgroundColor: accentColor }} />
+            </div>
+            <span className="stat-value">{pokemon.stats[i]}</span>
+          </div>
+        ))}
+      </div>
+
+      {pokemon.weaknesses.length > 0 && (
+        <div className="card-weaknesses">
+          <p className="weaknesses-label">Weak to:</p>
+          <div className="weakness-badges">
+            {pokemon.weaknesses.map(type => (
+              <span key={type} className="type-badge" style={{ backgroundColor: TYPE_COLORS[type] || '#888' }}>
+                {type}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -169,37 +227,21 @@ function PokemonComparison() {
 
       {!loading && !error && comparisonData && (
         <div className="comparison-content">
-          {/* Pokemon Headers with Images */}
+          {/* Pokemon Cards */}
           <div className="pokemon-headers">
-            <div className="pokemon-card pokemon1-card">
-              <h2>{comparisonData.pokemon1.name}</h2>
-              <p className="pokedex-number">
-                Pokedex #{String(comparisonData.pokemon1.pokedex_number).padStart(4, '0')}
-              </p>
-              <p className="pokemon-type">
-                Type: {comparisonData.pokemon1.type1}
-                {comparisonData.pokemon1.type2 && ` / ${comparisonData.pokemon1.type2}`}
-              </p>
-              <div className="pokemon-image">
-                <img src={comparisonData.pokemon1.image} alt={comparisonData.pokemon1.name} />
-              </div>
-            </div>
-
+            <PokemonCardDisplay
+              pokemon={comparisonData.pokemon1}
+              statLabels={comparisonData.stat_labels}
+              accentColor="#e74c3c"
+              onEvoClick={setPokemon1}
+            />
             <div className="vs-divider">VS</div>
-
-            <div className="pokemon-card pokemon2-card">
-              <h2>{comparisonData.pokemon2.name}</h2>
-              <p className="pokedex-number">
-                Pokedex #{String(comparisonData.pokemon2.pokedex_number).padStart(4, '0')}
-              </p>
-              <p className="pokemon-type">
-                Type: {comparisonData.pokemon2.type1}
-                {comparisonData.pokemon2.type2 && ` / ${comparisonData.pokemon2.type2}`}
-              </p>
-              <div className="pokemon-image">
-                <img src={comparisonData.pokemon2.image} alt={comparisonData.pokemon2.name} />
-              </div>
-            </div>
+            <PokemonCardDisplay
+              pokemon={comparisonData.pokemon2}
+              statLabels={comparisonData.stat_labels}
+              accentColor="#3498db"
+              onEvoClick={setPokemon2}
+            />
           </div>
 
           {/* Radar Chart */}
@@ -286,65 +328,6 @@ function PokemonComparison() {
                 </tr>
               </tbody>
             </table>
-          </div>
-
-          {/* Evolution and Additional Info */}
-          <div className="info-grid">
-            <div className="info-card pokemon1-info">
-              <h3>{comparisonData.pokemon1.name} - Evolution Chain</h3>
-              <table>
-                <tbody>
-                  <tr>
-                    <td><strong>Base Evolution:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon1.base_evolution} onClick={setPokemon1} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Evolves From:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon1.evolve_from} onClick={setPokemon1} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Evolves To:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon1.evolve_to} onClick={setPokemon1} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Final Evolution:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon1.final_evolution} onClick={setPokemon1} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Weaknesses:</strong></td>
-                    <td>{comparisonData.pokemon1.weaknesses.join(', ') || 'None'}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="info-card pokemon2-info">
-              <h3>{comparisonData.pokemon2.name} - Evolution Chain</h3>
-              <table>
-                <tbody>
-                  <tr>
-                    <td><strong>Base Evolution:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon2.base_evolution} onClick={setPokemon2} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Evolves From:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon2.evolve_from} onClick={setPokemon2} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Evolves To:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon2.evolve_to} onClick={setPokemon2} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Final Evolution:</strong></td>
-                    <td><EvoLink name={comparisonData.pokemon2.final_evolution} onClick={setPokemon2} /></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Weaknesses:</strong></td>
-                    <td>{comparisonData.pokemon2.weaknesses.join(', ') || 'None'}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
       )}
