@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import './PokemonComparison.css';
@@ -7,21 +8,38 @@ import './PokemonComparison.css';
 const API_BASE_URL = 'http://localhost:5000/api';
 
 function PokemonComparison() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [allPokemon, setAllPokemon] = useState([]);
-  const [pokemon1, setPokemon1] = useState('');
-  const [pokemon2, setPokemon2] = useState('');
   const [comparisonData, setComparisonData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load all pokemon names on mount
+  const pokemon1 = searchParams.get('p1') || '';
+  const pokemon2 = searchParams.get('p2') || '';
+
+  const setPokemon1 = (name) => {
+    setSearchParams({ p1: name, p2: pokemon2 }, { replace: true });
+  };
+
+  const setPokemon2 = (name) => {
+    setSearchParams({ p1: pokemon1, p2: name }, { replace: true });
+  };
+
+  // Load all pokemon names on mount; default p1/p2 if not in URL
   useEffect(() => {
     axios.get(`${API_BASE_URL}/pokemon`)
       .then(response => {
         setAllPokemon(response.data);
         if (response.data.length > 1) {
-          setPokemon1(response.data[0]);
-          setPokemon2(response.data[1]);
+          const params = {};
+          if (!searchParams.get('p1')) params.p1 = response.data[0];
+          if (!searchParams.get('p2')) params.p2 = response.data[1];
+          if (Object.keys(params).length) {
+            setSearchParams(
+              { p1: searchParams.get('p1') || response.data[0], p2: searchParams.get('p2') || response.data[1] },
+              { replace: true }
+            );
+          }
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
@@ -86,9 +104,7 @@ function PokemonComparison() {
   };
 
   const handleSwap = () => {
-    const temp = pokemon1;
-    setPokemon1(pokemon2);
-    setPokemon2(temp);
+    setSearchParams({ p1: pokemon2, p2: pokemon1 }, { replace: true });
   };
 
   return (

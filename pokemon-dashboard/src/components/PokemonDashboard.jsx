@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import './PokemonDashboard.css';
@@ -7,20 +8,27 @@ import './PokemonDashboard.css';
 const API_BASE_URL = 'http://localhost:5000/api';
 
 function PokemonDashboard() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [allPokemon, setAllPokemon] = useState([]);
-  const [selectedPokemon, setSelectedPokemon] = useState('');
   const [pokemonData, setPokemonData] = useState(null);
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load all pokemon names on mount
+  const selectedPokemon = searchParams.get('pokemon') || '';
+
+  const setSelectedPokemon = (name) => {
+    setSearchParams({ pokemon: name }, { replace: true });
+  };
+
+  // Load all pokemon names on mount; if no ?pokemon= param, default to first
   useEffect(() => {
     axios.get(`${API_BASE_URL}/pokemon`)
       .then(response => {
         setAllPokemon(response.data);
-        if (response.data.length > 0) {
-          setSelectedPokemon(response.data[0]);
+        if (!searchParams.get('pokemon') && response.data.length > 0) {
+          setSearchParams({ pokemon: response.data[0] }, { replace: true });
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));

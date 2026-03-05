@@ -1,30 +1,25 @@
-import logo from './logo.svg';
-import React, { useState } from 'react';
+import React from 'react';
+import { Routes, Route, NavLink } from 'react-router-dom';
 import PokemonDashboard from './components/PokemonDashboard';
 import PokemonComparison from './components/PokemonComparison';
 import './App.css';
 
 function App() {
-  const [view, setView] = useState('dashboard'); // 'dashboard' or 'comparison'
-
   return (
     <div className="App">
       <nav className="main-nav">
-        <button
-          className={view === 'dashboard' ? 'active' : ''}
-          onClick={() => setView('dashboard')}
-        >
+        <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>
           Single Pokemon
-        </button>
-        <button
-          className={view === 'comparison' ? 'active' : ''}
-          onClick={() => setView('comparison')}
-        >
+        </NavLink>
+        <NavLink to="/compare" className={({ isActive }) => isActive ? 'active' : ''}>
           Compare Pokemon
-        </button>
+        </NavLink>
       </nav>
 
-      {view === 'dashboard' ? <PokemonDashboard /> : <PokemonComparison />}
+      <Routes>
+        <Route path="/" element={<PokemonDashboard />} />
+        <Route path="/compare" element={<PokemonComparison />} />
+      </Routes>
     </div>
   );
 }

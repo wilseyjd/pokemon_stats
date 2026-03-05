@@ -22,7 +22,7 @@ body {
   gap: 20px;
 }
 
-.main-nav button {
+.main-nav a {
   padding: 15px 30px;
   font-size: 18px;
   font-weight: bold;
@@ -33,15 +33,16 @@ body {
   color: #2c3e50;
   transition: all 0.3s;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
 }
 
-.main-nav button:hover {
+.main-nav a:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-.main-nav button.active {
-  background: linear-gradient(135deg, #3c6fd6 0%, #3c6fd6 100%);
+.main-nav a.active {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
 }
 
