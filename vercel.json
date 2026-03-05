@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "installCommand": "npm install --prefix pokemon-dashboard",
   "buildCommand": "npm run build --prefix pokemon-dashboard",
   "outputDirectory": "pokemon-dashboard/build",
   "routes": [
