@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import './PokemonDashboard.css';
@@ -16,7 +16,6 @@ function EvoLink({ name, onClick }) {
 
 function PokemonDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [allPokemon, setAllPokemon] = useState([]);
   const [pokemonData, setPokemonData] = useState(null);
   const [statsData, setStatsData] = useState(null);
@@ -112,12 +111,6 @@ function PokemonDashboard() {
         <div className="pokemon-details">
           <div className="pokemon-header">
             <h2>{pokemonData.Name}</h2>
-            <button
-              className="compare-btn"
-              onClick={() => navigate(`/compare?p1=${encodeURIComponent(selectedPokemon)}`)}
-            >
-              Compare this Pokémon
-            </button>
             <p className="pokedex-number">Pokedex #{String(pokemonData['Pokedex Number']).padStart(4, '0')}</p>
             <p className="pokemon-type">
               Type: {pokemonData['Type 1']}
