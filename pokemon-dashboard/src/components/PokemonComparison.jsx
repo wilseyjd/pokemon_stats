@@ -44,6 +44,7 @@ function PokemonComparison() {
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load comparison when both pokemon are selected
@@ -51,6 +52,7 @@ function PokemonComparison() {
     if (pokemon1 && pokemon2 && pokemon1 !== pokemon2) {
       loadComparison();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon1, pokemon2]);
 
   const loadComparison = async () => {

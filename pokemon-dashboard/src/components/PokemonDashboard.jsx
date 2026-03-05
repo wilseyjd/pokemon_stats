@@ -39,6 +39,7 @@ function PokemonDashboard() {
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load selected pokemon data
