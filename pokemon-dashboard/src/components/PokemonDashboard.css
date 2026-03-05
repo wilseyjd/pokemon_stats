@@ -22,24 +22,6 @@
   align-items: center;
 }
 
-
-.compare-btn {
-  display: inline-block;
-  margin: 8px 0 16px;
-  padding: 8px 20px;
-  font-size: 14px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.compare-btn:hover {
-  background-color: #2980b9;
-}
-
 .random-btn {
   padding: 10px 20px;
   font-size: 16px;
@@ -65,11 +47,6 @@
 .dashboard-card-wrap {
   max-width: 360px;
   margin: 0 auto 16px;
-}
-
-.compare-wrap {
-  text-align: center;
-  margin-bottom: 24px;
 }
 
 .content-grid {

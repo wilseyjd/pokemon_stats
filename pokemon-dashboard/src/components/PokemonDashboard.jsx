@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay, TYPE_COLORS } from './PokemonCard';
@@ -17,7 +17,6 @@ function EvoLink({ name, onClick }) {
 
 function PokemonDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [allPokemon, setAllPokemon] = useState([]);
   const [pokemonData, setPokemonData] = useState(null);
   const [statsData, setStatsData] = useState(null);
@@ -134,15 +133,6 @@ function PokemonDashboard() {
               accentColor={TYPE_COLORS[pokemonData['Type 1']] || '#3498db'}
               onEvoClick={setSelectedPokemon}
             />
-          </div>
-
-          <div className="compare-wrap">
-            <button
-              className="compare-btn"
-              onClick={() => navigate(`/compare?p1=${encodeURIComponent(selectedPokemon)}`)}
-            >
-              Compare this Pokémon
-            </button>
           </div>
 
           <div className="content-grid">

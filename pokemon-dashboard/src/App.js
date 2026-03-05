@@ -1,17 +1,26 @@
 import React from 'react';
-import { Routes, Route, NavLink } from 'react-router-dom';
+import { Routes, Route, NavLink, useSearchParams } from 'react-router-dom';
 import PokemonDashboard from './components/PokemonDashboard';
 import PokemonComparison from './components/PokemonComparison';
 import './App.css';
 
 function App() {
+  const [searchParams] = useSearchParams();
+
+  // Carry the primary Pokemon across views when switching tabs
+  const pokemon = searchParams.get('pokemon') || '';  // Dashboard param
+  const p1 = searchParams.get('p1') || '';            // Comparison param
+
+  const dashboardLink = p1 ? `/?pokemon=${encodeURIComponent(p1)}` : '/';
+  const compareLink = pokemon ? `/compare?p1=${encodeURIComponent(pokemon)}` : '/compare';
+
   return (
     <div className="App">
       <nav className="main-nav">
-        <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>
+        <NavLink to={dashboardLink} end className={({ isActive }) => isActive ? 'active' : ''}>
           Single Pokemon
         </NavLink>
-        <NavLink to="/compare" className={({ isActive }) => isActive ? 'active' : ''}>
+        <NavLink to={compareLink} className={({ isActive }) => isActive ? 'active' : ''}>
           Compare Pokemon
         </NavLink>
       </nav>
