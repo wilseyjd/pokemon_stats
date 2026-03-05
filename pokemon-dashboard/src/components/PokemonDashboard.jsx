@@ -73,7 +73,10 @@ function PokemonDashboard() {
         <h1>Pokemon Dashboard</h1>
 
         <div className="controls">
+          {/* JEF-77: associated label for screen readers */}
+          <label htmlFor="pokemon-select" className="visually-hidden">Choose a Pokémon</label>
           <select
+            id="pokemon-select"
             value={selectedPokemon}
             onChange={(e) => setSelectedPokemon(e.target.value)}
             className="pokemon-select"
@@ -106,9 +109,15 @@ function PokemonDashboard() {
             </p>
           </div>
 
+          {/* JEF-73: link to specific Pokemon page instead of generic index */}
           <div className="pokemon-image">
-            <a href="https://pokemondb.net/pokedex/">
-            <img src={pokemonData.Image} alt={pokemonData.Name} />
+            <a
+              href={`https://pokemondb.net/pokedex/${pokemonData.Name.toLowerCase()}`}
+              target="_blank"
+              rel="noreferrer"
+              title={`View ${pokemonData.Name} on PokemonDB`}
+            >
+              <img src={pokemonData.Image} alt={pokemonData.Name} />
             </a>
           </div>
 
