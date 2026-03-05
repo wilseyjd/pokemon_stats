@@ -21,7 +21,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/pokemon-dashboard/build/index.html"
+      "dest": "/index.html"
     }
   ]
 }
