@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
+import { PokemonCardDisplay, TYPE_COLORS } from './PokemonCard';
 import './PokemonDashboard.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -83,6 +84,22 @@ function PokemonDashboard() {
     }
   };
 
+  // Transform raw API data into the shape PokemonCardDisplay expects
+  const buildCardPokemon = (data, stats) => ({
+    name: data.Name,
+    pokedex_number: data['Pokedex Number'],
+    type1: data['Type 1'],
+    type2: data['Type 2'],
+    image: data.Image,
+    stats: stats.map(s => s.value),
+    percentiles: stats.map(s => s.percentile),
+    evolve_from: data['Evolve From'],
+    weaknesses: Object.keys(data)
+      .filter(k => k.startsWith('Weak to ') && data[k] === true)
+      .map(k => k.replace('Weak to ', ''))
+      .slice(0, 6),
+  });
+
   return (
     <div className="pokemon-dashboard">
       <header className="dashboard-header">
@@ -108,55 +125,44 @@ function PokemonDashboard() {
 
       {loading && <div className="loading">Loading...</div>}
 
-      {!loading && !error && pokemonData && (
+      {!loading && !error && pokemonData && statsData && (
         <div className="pokemon-details">
-          <div className="pokemon-header">
-            <h2>{pokemonData.Name}</h2>
+          <div className="dashboard-card-wrap">
+            <PokemonCardDisplay
+              pokemon={buildCardPokemon(pokemonData, statsData)}
+              statLabels={statsData.map(s => s.stat)}
+              accentColor={TYPE_COLORS[pokemonData['Type 1']] || '#3498db'}
+              onEvoClick={setSelectedPokemon}
+            />
+          </div>
+
+          <div className="compare-wrap">
             <button
               className="compare-btn"
               onClick={() => navigate(`/compare?p1=${encodeURIComponent(selectedPokemon)}`)}
             >
               Compare this Pokémon
             </button>
-            <p className="pokedex-number">Pokedex #{String(pokemonData['Pokedex Number']).padStart(4, '0')}</p>
-            <p className="pokemon-type">
-              Type: {pokemonData['Type 1']}
-              {pokemonData['Type 2'] && ` / ${pokemonData['Type 2']}`}
-            </p>
-          </div>
-
-          {/* JEF-73: link to specific Pokemon page instead of generic index */}
-          <div className="pokemon-image">
-            <a
-              href={`https://pokemondb.net/pokedex/${pokemonData.Name.toLowerCase()}`}
-              target="_blank"
-              rel="noreferrer"
-              title={`View ${pokemonData.Name} on PokemonDB`}
-            >
-              <img src={pokemonData.Image} alt={pokemonData.Name} />
-            </a>
           </div>
 
           <div className="content-grid">
             <div className="stats-section">
               <h3>Stats (Percentile)</h3>
-              {statsData && (
-                <ResponsiveContainer width="100%" height={400}>
-                  <RadarChart data={statsData}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="stat" />
-                    <PolarRadiusAxis angle={90} domain={[0, 100]} />
-                    <Radar
-                      name="Percentile"
-                      dataKey="percentile"
-                      stroke="#4393c3"
-                      fill="#4393c3"
-                      fillOpacity={0.5}
-                    />
-                    <Legend />
-                  </RadarChart>
-                </ResponsiveContainer>
-              )}
+              <ResponsiveContainer width="100%" height={400}>
+                <RadarChart data={statsData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="stat" />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} />
+                  <Radar
+                    name="Percentile"
+                    dataKey="percentile"
+                    stroke="#4393c3"
+                    fill="#4393c3"
+                    fillOpacity={0.5}
+                  />
+                  <Legend />
+                </RadarChart>
+              </ResponsiveContainer>
 
               <div className="stats-table">
                 <h4>Detailed Stats</h4>
@@ -169,7 +175,7 @@ function PokemonDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {statsData && statsData.map((stat, idx) => (
+                    {statsData.map((stat, idx) => (
                       <tr key={idx}>
                         <td>{stat.stat}</td>
                         <td>{stat.value}</td>
@@ -212,13 +218,12 @@ function PokemonDashboard() {
                   <tbody>
                     <tr>
                       <td><strong>Total Stats:</strong></td>
-                      <td>{statsData && statsData.reduce((sum, s) => sum + s.value, 0)}</td>
+                      <td>{statsData.reduce((sum, s) => sum + s.value, 0)}</td>
                     </tr>
                     <tr>
                       <td><strong>Avg Percentile:</strong></td>
                       <td>
-                        {statsData &&
-                          (statsData.reduce((sum, s) => sum + s.percentile, 0) / statsData.length).toFixed(1)}%
+                        {(statsData.reduce((sum, s) => sum + s.percentile, 0) / statsData.length).toFixed(1)}%
                       </td>
                     </tr>
                   </tbody>
