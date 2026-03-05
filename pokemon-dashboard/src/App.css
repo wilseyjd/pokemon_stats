@@ -44,3 +44,9 @@ body {
   background: linear-gradient(135deg, #3c6fd6 0%, #3c6fd6 100%);
   color: white;
 }
+
+/* Keyboard focus styles — visible for all interactive elements */
+:focus-visible {
+  outline: 3px solid #3498db;
+  outline-offset: 2px;
+}
