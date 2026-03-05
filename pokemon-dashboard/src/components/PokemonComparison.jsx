@@ -6,7 +6,7 @@ import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay } from './PokemonCard';
 import './PokemonComparison.css';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function PokemonComparison() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,6 +44,7 @@ function PokemonComparison() {
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load comparison when both pokemon are selected
@@ -51,6 +52,7 @@ function PokemonComparison() {
     if (pokemon1 && pokemon2 && pokemon1 !== pokemon2) {
       loadComparison();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon1, pokemon2]);
 
   const loadComparison = async () => {

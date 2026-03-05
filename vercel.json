@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build --prefix pokemon-dashboard",
+  "outputDirectory": "pokemon-dashboard/build",
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
