@@ -6,6 +6,13 @@ import './PokemonComparison.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
+function EvoLink({ name, onClick }) {
+  if (!name) return <span>None</span>;
+  return (
+    <button className="evolution-link" onClick={() => onClick(name)}>{name}</button>
+  );
+}
+
 function PokemonComparison() {
   const [allPokemon, setAllPokemon] = useState([]);
   const [pokemon1, setPokemon1] = useState('');
@@ -273,19 +280,19 @@ function PokemonComparison() {
                 <tbody>
                   <tr>
                     <td><strong>Base Evolution:</strong></td>
-                    <td>{comparisonData.pokemon1.base_evolution}</td>
+                    <td><EvoLink name={comparisonData.pokemon1.base_evolution} onClick={setPokemon1} /></td>
                   </tr>
                   <tr>
                     <td><strong>Evolves From:</strong></td>
-                    <td>{comparisonData.pokemon1.evolve_from || 'None'}</td>
+                    <td><EvoLink name={comparisonData.pokemon1.evolve_from} onClick={setPokemon1} /></td>
                   </tr>
                   <tr>
                     <td><strong>Evolves To:</strong></td>
-                    <td>{comparisonData.pokemon1.evolve_to || 'None'}</td>
+                    <td><EvoLink name={comparisonData.pokemon1.evolve_to} onClick={setPokemon1} /></td>
                   </tr>
                   <tr>
                     <td><strong>Final Evolution:</strong></td>
-                    <td>{comparisonData.pokemon1.final_evolution}</td>
+                    <td><EvoLink name={comparisonData.pokemon1.final_evolution} onClick={setPokemon1} /></td>
                   </tr>
                   <tr>
                     <td><strong>Weaknesses:</strong></td>
@@ -301,19 +308,19 @@ function PokemonComparison() {
                 <tbody>
                   <tr>
                     <td><strong>Base Evolution:</strong></td>
-                    <td>{comparisonData.pokemon2.base_evolution}</td>
+                    <td><EvoLink name={comparisonData.pokemon2.base_evolution} onClick={setPokemon2} /></td>
                   </tr>
                   <tr>
                     <td><strong>Evolves From:</strong></td>
-                    <td>{comparisonData.pokemon2.evolve_from || 'None'}</td>
+                    <td><EvoLink name={comparisonData.pokemon2.evolve_from} onClick={setPokemon2} /></td>
                   </tr>
                   <tr>
                     <td><strong>Evolves To:</strong></td>
-                    <td>{comparisonData.pokemon2.evolve_to || 'None'}</td>
+                    <td><EvoLink name={comparisonData.pokemon2.evolve_to} onClick={setPokemon2} /></td>
                   </tr>
                   <tr>
                     <td><strong>Final Evolution:</strong></td>
-                    <td>{comparisonData.pokemon2.final_evolution}</td>
+                    <td><EvoLink name={comparisonData.pokemon2.final_evolution} onClick={setPokemon2} /></td>
                   </tr>
                   <tr>
                     <td><strong>Weaknesses:</strong></td>

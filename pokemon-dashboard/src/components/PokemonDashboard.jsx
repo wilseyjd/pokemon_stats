@@ -6,6 +6,13 @@ import './PokemonDashboard.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
+function EvoLink({ name, onClick }) {
+  if (!name) return <span>None</span>;
+  return (
+    <button className="evolution-link" onClick={() => onClick(name)}>{name}</button>
+  );
+}
+
 function PokemonDashboard() {
   const [allPokemon, setAllPokemon] = useState([]);
   const [selectedPokemon, setSelectedPokemon] = useState('');
@@ -167,19 +174,19 @@ function PokemonDashboard() {
                   <tbody>
                     <tr>
                       <td><strong>Base Evolution:</strong></td>
-                      <td>{pokemonData['Base Evolution'] || 'N/A'}</td>
+                      <td><EvoLink name={pokemonData['Base Evolution']} onClick={setSelectedPokemon} /></td>
                     </tr>
                     <tr>
                       <td><strong>Evolves From:</strong></td>
-                      <td>{pokemonData['Evolve From'] || 'None'}</td>
+                      <td><EvoLink name={pokemonData['Evolve From']} onClick={setSelectedPokemon} /></td>
                     </tr>
                     <tr>
                       <td><strong>Evolves To:</strong></td>
-                      <td>{pokemonData['Evolve To'] || 'None'}</td>
+                      <td><EvoLink name={pokemonData['Evolve To']} onClick={setSelectedPokemon} /></td>
                     </tr>
                     <tr>
                       <td><strong>Final Evolution:</strong></td>
-                      <td>{pokemonData['Final Evolution'] || 'N/A'}</td>
+                      <td><EvoLink name={pokemonData['Final Evolution']} onClick={setSelectedPokemon} /></td>
                     </tr>
                   </tbody>
                 </table>
