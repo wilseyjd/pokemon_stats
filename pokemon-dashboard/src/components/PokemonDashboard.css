@@ -22,13 +22,6 @@
   align-items: center;
 }
 
-.pokemon-select {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: 2px solid #3498db;
-  border-radius: 5px;
-  min-width: 200px;
-}
 
 .random-btn {
   padding: 10px 20px;

@@ -35,21 +35,6 @@
   color: #2c3e50;
 }
 
-.pokemon-select {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 2px solid #3498db;
-  border-radius: 5px;
-  min-width: 180px;
-}
-
-.pokemon1-select {
-  border-color: #e74c3c;
-}
-
-.pokemon2-select {
-  border-color: #3498db;
-}
 
 .random-btn {
   padding: 10px 20px;

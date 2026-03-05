@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
+import PokemonSelect from './PokemonSelect';
 import './PokemonDashboard.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -73,18 +74,12 @@ function PokemonDashboard() {
         <h1>Pokemon Dashboard</h1>
 
         <div className="controls">
-          {/* JEF-77: associated label for screen readers */}
-          <label htmlFor="pokemon-select" className="visually-hidden">Choose a Pokémon</label>
-          <select
+          <PokemonSelect
             id="pokemon-select"
             value={selectedPokemon}
-            onChange={(e) => setSelectedPokemon(e.target.value)}
-            className="pokemon-select"
-          >
-            {allPokemon.map(name => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-          </select>
+            options={allPokemon}
+            onChange={setSelectedPokemon}
+          />
 
           <button onClick={handleRandomPokemon} className="random-btn">
             Random Pokemon

@@ -1,0 +1,110 @@
+.pokemon-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.pokemon-select-label {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  font-size: 0.9em;
+}
+
+.pokemon-select-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pokemon-select-input {
+  width: 100%;
+  padding: 10px 36px 10px 14px;
+  font-size: 15px;
+  border: 2px solid #3498db;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.pokemon-select-input:focus {
+  outline: none;
+  border-color: #2980b9;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+  cursor: text;
+}
+
+.pokemon-select-arrow {
+  position: absolute;
+  right: 10px;
+  font-size: 10px;
+  color: #7f8c8d;
+  pointer-events: none;
+}
+
+.pokemon-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  background: white;
+  border: 2px solid #3498db;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.pokemon-select-option {
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #2c3e50;
+}
+
+.pokemon-select-option.highlighted {
+  background-color: #eaf4fd;
+}
+
+.pokemon-select-option.selected {
+  font-weight: bold;
+  color: #2980b9;
+}
+
+.pokemon-select-option.selected.highlighted {
+  background-color: #d6eaf8;
+}
+
+.pokemon-select-empty {
+  padding: 10px 14px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* Color variants for comparison view */
+.pokemon1-combobox .pokemon-select-input {
+  border-color: #e74c3c;
+}
+
+.pokemon1-combobox .pokemon-select-input:focus {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+.pokemon1-combobox .pokemon-select-dropdown {
+  border-color: #e74c3c;
+}
+
+.pokemon2-combobox .pokemon-select-input {
+  border-color: #3498db;
+}
+
+.pokemon2-combobox .pokemon-select-dropdown {
+  border-color: #3498db;
+}
