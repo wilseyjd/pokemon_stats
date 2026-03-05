@@ -1,72 +1,58 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './PokemonSelect.css';
 
 /**
  * Searchable combobox for selecting a Pokemon from a large list.
- * Supports keyboard navigation (arrows, Enter, Escape) and mouse.
+ * Supports keyboard navigation (arrows, Enter, Escape) and click selection.
  */
 function PokemonSelect({ id, value, options, onChange, label, className = '' }) {
-  const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-
-  const containerRef = useRef(null);
-  const inputRef = useRef(null);
+  const [query, setQuery] = useState('');
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const listRef = useRef(null);
 
-  const filtered = query.trim()
+  const filtered = query
     ? options.filter(name => name.toLowerCase().includes(query.toLowerCase()))
     : options;
 
-  // Sync the input display when value changes externally (e.g. random button)
+  // Scroll highlighted item into view within the dropdown
   useEffect(() => {
-    if (!isOpen) setQuery('');
-  }, [value, isOpen]);
-
-  // Reset highlight when filtered list changes
-  useEffect(() => {
-    setHighlightedIndex(0);
-  }, [query]);
-
-  // Scroll highlighted item into view
-  useEffect(() => {
-    if (!listRef.current) return;
+    if (highlightedIndex < 0 || !listRef.current) return;
     const item = listRef.current.children[highlightedIndex];
     if (item) item.scrollIntoView({ block: 'nearest' });
   }, [highlightedIndex]);
 
-  // Close on outside click
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setIsOpen(false);
-        setQuery('');
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  const openDropdown = () => {
+    setIsOpen(true);
+    setQuery('');
+    setHighlightedIndex(-1);
+  };
+
+  const closeDropdown = () => {
+    setIsOpen(false);
+    setQuery('');
+    setHighlightedIndex(-1);
+  };
 
   const selectOption = (name) => {
     onChange(name);
-    setIsOpen(false);
-    setQuery('');
-    inputRef.current?.blur();
+    closeDropdown();
   };
 
-  const handleInputClick = () => {
-    setIsOpen(true);
-    setQuery('');
+  const handleFocus = () => {
+    openDropdown();
+  };
+
+  // onBlur fires when the input loses focus. We use it to close the dropdown
+  // UNLESS the user clicked an option (onMouseDown fires before onBlur and
+  // calls e.preventDefault(), keeping focus in the input long enough for the
+  // click to complete via the onMouseDown handler).
+  const handleBlur = () => {
+    closeDropdown();
   };
 
   const handleKeyDown = (e) => {
-    if (!isOpen) {
-      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        setIsOpen(true);
-      }
-      return;
-    }
+    if (!isOpen) return;
 
     switch (e.key) {
       case 'ArrowDown':
@@ -79,40 +65,52 @@ function PokemonSelect({ id, value, options, onChange, label, className = '' }) 
         break;
       case 'Enter':
         e.preventDefault();
-        if (filtered[highlightedIndex]) selectOption(filtered[highlightedIndex]);
+        if (highlightedIndex >= 0 && filtered[highlightedIndex]) {
+          selectOption(filtered[highlightedIndex]);
+        }
         break;
       case 'Escape':
-        setIsOpen(false);
-        setQuery('');
+        e.preventDefault();
+        closeDropdown();
         break;
       default:
         break;
     }
   };
 
-  const displayValue = isOpen ? query : (value || '');
+  // When open: show the query text the user is typing.
+  // When closed: show the currently selected Pokemon name.
+  const inputValue = isOpen ? query : (value || '');
 
   return (
-    <div className={`pokemon-select-wrapper ${className}`} ref={containerRef}>
+    <div className={`pokemon-select-wrapper ${className}`}>
       {label && <label htmlFor={id} className="pokemon-select-label">{label}</label>}
       <div className="pokemon-select-control">
         <input
           id={id}
-          ref={inputRef}
           type="text"
           role="combobox"
           aria-autocomplete="list"
           aria-expanded={isOpen}
           aria-controls={`${id}-listbox`}
-          aria-activedescendant={isOpen && filtered[highlightedIndex] ? `${id}-option-${highlightedIndex}` : undefined}
-          value={displayValue}
-          placeholder={isOpen ? 'Search…' : ''}
-          onChange={e => setQuery(e.target.value)}
-          onClick={handleInputClick}
-          onFocus={handleInputClick}
+          aria-activedescendant={
+            isOpen && highlightedIndex >= 0 && filtered[highlightedIndex]
+              ? `${id}-option-${highlightedIndex}`
+              : undefined
+          }
+          value={inputValue}
+          placeholder={isOpen ? 'Search Pokémon…' : ''}
+          onChange={e => {
+            setQuery(e.target.value);
+            setHighlightedIndex(e.target.value ? 0 : -1);
+          }}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           className="pokemon-select-input"
           autoComplete="off"
+          spellCheck={false}
+          readOnly={!isOpen}
         />
         <span className="pokemon-select-arrow" aria-hidden="true">
           {isOpen ? '▲' : '▼'}
@@ -132,7 +130,7 @@ function PokemonSelect({ id, value, options, onChange, label, className = '' }) 
           ) : (
             filtered.map((name, idx) => (
               <li
-                key={name}
+                key={`${name}-${idx}`}
                 id={`${id}-option-${idx}`}
                 role="option"
                 aria-selected={name === value}
@@ -140,9 +138,10 @@ function PokemonSelect({ id, value, options, onChange, label, className = '' }) 
                   'pokemon-select-option',
                   name === value ? 'selected' : '',
                   idx === highlightedIndex ? 'highlighted' : '',
-                ].join(' ')}
+                ].filter(Boolean).join(' ')}
                 onMouseDown={(e) => {
-                  e.preventDefault(); // prevent input blur before click registers
+                  // Prevent input blur so handleBlur doesn't fire before selection
+                  e.preventDefault();
                   selectOption(name);
                 }}
                 onMouseEnter={() => setHighlightedIndex(idx)}

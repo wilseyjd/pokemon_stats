@@ -52,7 +52,8 @@ function PokemonComparison() {
         value2: response.data.pokemon2.stats[idx]
       }));
 
-      // Store the names used to key the chartData so rendering is always in sync
+      // Store the names used to key chartData so rendering stays in sync
+      // even when pokemon1/pokemon2 state updates before the next fetch completes
       setComparisonData({
         ...response.data,
         chartData,
