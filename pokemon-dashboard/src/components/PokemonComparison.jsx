@@ -5,7 +5,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay } from './PokemonCard';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const tdBase = 'p-3 text-left border-b border-[#ecf0f1]';
 const p1Col = `${tdBase} bg-[rgba(231,76,60,0.1)]`;
@@ -47,6 +47,7 @@ function PokemonComparison() {
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load comparison when both pokemon are selected
@@ -54,6 +55,7 @@ function PokemonComparison() {
     if (pokemon1 && pokemon2 && pokemon1 !== pokemon2) {
       loadComparison();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon1, pokemon2]);
 
   const loadComparison = async () => {

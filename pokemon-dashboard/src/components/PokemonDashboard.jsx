@@ -5,7 +5,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay, TYPE_COLORS } from './PokemonCard';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function EvoLink({ name, onClick }) {
   if (!name) return <span>None</span>;
@@ -43,6 +43,7 @@ function PokemonDashboard() {
         }
       })
       .catch(() => setError('Could not load Pokémon list. Is the server running?'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load selected pokemon data
