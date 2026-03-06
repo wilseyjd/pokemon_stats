@@ -12,7 +12,7 @@ function EvoLink({ name, onClick }) {
   if (!name) return <span>None</span>;
   return (
     <button
-      className="bg-transparent border-0 p-0 text-pokemon-blue cursor-pointer text-[inherit] font-[inherit] underline hover:text-pokemon-blue-dark"
+      className="bg-transparent border-0 p-0 text-pokemon-red cursor-pointer text-[inherit] font-[inherit] underline hover:text-pokemon-red-dark"
       onClick={() => onClick(name)}
     >
       {name}
@@ -105,7 +105,7 @@ function PokemonDashboard() {
       .slice(0, 6),
   });
 
-  const sectionHeadingClass = 'text-pokemon-dark border-b-2 border-pokemon-blue pb-[10px] mb-5';
+  const sectionHeadingClass = 'text-pokemon-dark border-b-2 border-pokemon-red pb-[10px] mb-5';
 
   return (
     <div className="max-w-[1400px] mx-auto p-5">
@@ -148,7 +148,7 @@ function PokemonDashboard() {
             <PokemonCardDisplay
               pokemon={buildCardPokemon(pokemonData, statsData)}
               statLabels={statsData.map(s => s.stat)}
-              accentColor={COLORS.blue}
+              accentColor={COLORS.red}
               onEvoClick={setSelectedPokemon}
             />
           </div>
@@ -164,8 +164,8 @@ function PokemonDashboard() {
                   <Radar
                     name="Percentile"
                     dataKey="percentile"
-                    stroke={COLORS.blue}
-                    fill={COLORS.blue}
+                    stroke={COLORS.red}
+                    fill={COLORS.red}
                     fillOpacity={0.5}
                   />
                   <Legend />
@@ -177,9 +177,9 @@ function PokemonDashboard() {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-blue text-white font-bold">Stat</th>
-                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-blue text-white font-bold">Value</th>
-                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-blue text-white font-bold">Percentile</th>
+                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-red text-white font-bold">Stat</th>
+                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-red text-white font-bold">Value</th>
+                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-red text-white font-bold">Percentile</th>
                     </tr>
                   </thead>
                   <tbody>
