@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { COLORS } from '../colors';
 
 // Maps accent color to its focus ring rgba value
 const FOCUS_SHADOW = {
@@ -10,7 +11,7 @@ const FOCUS_SHADOW = {
  * Searchable combobox for selecting a Pokemon from a large list.
  * Supports keyboard navigation (arrows, Enter, Escape) and click selection.
  */
-function PokemonSelect({ id, value, options, onChange, label, accentColor = '#3498db' }) {
+function PokemonSelect({ id, value, options, onChange, label, accentColor = COLORS.blue }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -96,15 +97,15 @@ function PokemonSelect({ id, value, options, onChange, label, accentColor = '#34
     : borderStyle;
 
   const optionClass = (name, idx) => [
-    'py-[9px] px-[14px] cursor-pointer text-[15px] text-[#2c3e50]',
-    name === value && idx === highlightedIndex ? 'bg-[#d6eaf8] font-bold text-[#2980b9]' :
-    name === value ? 'font-bold text-[#2980b9]' :
-    idx === highlightedIndex ? 'bg-[#eaf4fd]' : '',
+    'py-[9px] px-[14px] cursor-pointer text-[15px] text-pokemon-dark',
+    name === value && idx === highlightedIndex ? 'bg-pokemon-select-highlight font-bold text-pokemon-blue-dark' :
+    name === value ? 'font-bold text-pokemon-blue-dark' :
+    idx === highlightedIndex ? 'bg-pokemon-select-hover' : '',
   ].filter(Boolean).join(' ');
 
   return (
     <div className="relative inline-flex flex-col min-w-[200px]">
-      {label && <label htmlFor={id} className="font-bold text-[#2c3e50] mb-1 text-[0.9em]">{label}</label>}
+      {label && <label htmlFor={id} className="font-bold text-pokemon-dark mb-1 text-[0.9em]">{label}</label>}
       <div className="relative flex items-center">
         <input
           id={id}
@@ -133,7 +134,7 @@ function PokemonSelect({ id, value, options, onChange, label, accentColor = '#34
           spellCheck={false}
           readOnly={!isOpen}
         />
-        <span className="absolute right-[10px] text-[10px] text-[#7f8c8d] pointer-events-none" aria-hidden="true">
+        <span className="absolute right-[10px] text-[10px] text-pokemon-muted pointer-events-none" aria-hidden="true">
           {isOpen ? '▲' : '▼'}
         </span>
       </div>
@@ -148,7 +149,7 @@ function PokemonSelect({ id, value, options, onChange, label, accentColor = '#34
           style={borderStyle}
         >
           {filtered.length === 0 ? (
-            <li className="py-[10px] px-[14px] text-[#7f8c8d] italic">No Pokémon found</li>
+            <li className="py-[10px] px-[14px] text-pokemon-muted italic">No Pokémon found</li>
           ) : (
             filtered.map((name, idx) => (
               <li

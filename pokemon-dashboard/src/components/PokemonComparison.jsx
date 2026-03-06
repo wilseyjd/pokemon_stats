@@ -4,12 +4,13 @@ import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay } from './PokemonCard';
+import { COLORS } from '../colors';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const tdBase = 'p-3 text-left border-b border-[#ecf0f1]';
-const p1Col = `${tdBase} bg-[rgba(231,76,60,0.1)]`;
-const p2Col = `${tdBase} bg-[rgba(52,152,219,0.1)]`;
+const tdBase = 'p-3 text-left border-b border-pokemon-border';
+const p1Col = `${tdBase} bg-pokemon-red/10`;
+const p2Col = `${tdBase} bg-pokemon-blue/10`;
 
 function PokemonComparison() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -116,9 +117,9 @@ function PokemonComparison() {
   const randomBtnBase = 'py-[10px] px-5 text-sm text-white border-0 rounded-[5px] cursor-pointer transition-all duration-300';
 
   return (
-    <div className="max-w-[1400px] mx-auto p-5 [font-family:'Arial',sans-serif]">
+    <div className="max-w-[1400px] mx-auto p-5">
       <header className="text-center mb-[30px]">
-        <h1 className="text-[#2c3e50] mb-[30px] text-[2.5em]">Pokemon Comparison</h1>
+        <h1 className="text-pokemon-dark mb-[30px] text-[2.5em]">Pokemon Comparison</h1>
 
         <div className="flex gap-5 justify-center items-center flex-wrap max-[968px]:flex-col">
           <div className="flex gap-[10px] items-center">
@@ -128,9 +129,9 @@ function PokemonComparison() {
               value={pokemon1}
               options={allPokemon}
               onChange={setPokemon1}
-              accentColor="#e74c3c"
+              accentColor={COLORS.red}
             />
-            <button onClick={handleRandomPokemon1} className={`${randomBtnBase} bg-[#e74c3c] hover:bg-[#c0392b]`}>
+            <button onClick={handleRandomPokemon1} className={`${randomBtnBase} bg-pokemon-red hover:bg-pokemon-red-dark`}>
               Random
             </button>
           </div>
@@ -138,7 +139,7 @@ function PokemonComparison() {
           {/* JEF-76: aria-label instead of title for screen reader support */}
           <button
             onClick={handleSwap}
-            className="py-[10px] px-5 text-[24px] bg-[#95a5a6] text-white border-0 rounded-full cursor-pointer transition-all duration-300 w-[50px] h-[50px] hover:bg-[#7f8c8d] hover:rotate-180"
+            className="py-[10px] px-5 text-[24px] bg-pokemon-neutral text-white border-0 rounded-full cursor-pointer transition-all duration-300 w-[50px] h-[50px] hover:bg-pokemon-muted hover:rotate-180"
             aria-label="Swap Pokémon"
           >
             <span aria-hidden="true">⇄</span>
@@ -151,9 +152,9 @@ function PokemonComparison() {
               value={pokemon2}
               options={allPokemon}
               onChange={setPokemon2}
-              accentColor="#3498db"
+              accentColor={COLORS.blue}
             />
-            <button onClick={handleRandomPokemon2} className={`${randomBtnBase} bg-[#3498db] hover:bg-[#2980b9]`}>
+            <button onClick={handleRandomPokemon2} className={`${randomBtnBase} bg-pokemon-blue hover:bg-pokemon-blue-dark`}>
               Random
             </button>
           </div>
@@ -161,17 +162,17 @@ function PokemonComparison() {
       </header>
 
       {error && (
-        <div className="bg-[#fdecea] border border-[#e74c3c] rounded-[8px] text-[#c0392b] py-[14px] px-5 mb-5 text-base" role="alert">
+        <div className="bg-pokemon-red-light border border-pokemon-red rounded-[8px] text-pokemon-red-dark py-[14px] px-5 mb-5 text-base" role="alert">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="text-center py-[50px] text-[1.5em] text-[#7f8c8d]">Loading comparison...</div>
+        <div className="text-center py-[50px] text-[1.5em] text-pokemon-muted">Loading comparison...</div>
       )}
 
       {!loading && pokemon1 && pokemon2 && pokemon1 === pokemon2 && (
-        <div className="text-center p-[40px] text-[1.1em] text-[#7f8c8d] bg-white rounded-[10px] shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
+        <div className="text-center p-[40px] text-[1.1em] text-pokemon-muted bg-white rounded-[10px] shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
           Select two different Pokémon to compare.
         </div>
       )}
@@ -183,17 +184,17 @@ function PokemonComparison() {
             <PokemonCardDisplay
               pokemon={comparisonData.pokemon1}
               statLabels={comparisonData.stat_labels}
-              accentColor="#e74c3c"
+              accentColor={COLORS.red}
               onEvoClick={setPokemon1}
               className="flex-1"
             />
-            <div className="text-[3em] font-bold text-[#95a5a6] px-5 flex items-center max-[968px]:justify-center max-[968px]:py-5 max-[968px]:px-0">
+            <div className="text-[3em] font-bold text-pokemon-neutral px-5 flex items-center max-[968px]:justify-center max-[968px]:py-5 max-[968px]:px-0">
               VS
             </div>
             <PokemonCardDisplay
               pokemon={comparisonData.pokemon2}
               statLabels={comparisonData.stat_labels}
-              accentColor="#3498db"
+              accentColor={COLORS.blue}
               onEvoClick={setPokemon2}
               className="flex-1"
             />
@@ -201,7 +202,7 @@ function PokemonComparison() {
 
           {/* Radar Chart */}
           <div className="my-[40px]">
-            <h3 className="text-center text-[#2c3e50] text-[1.8em] mb-5">Stats Comparison (Percentile)</h3>
+            <h3 className="text-center text-pokemon-dark text-[1.8em] mb-5">Stats Comparison (Percentile)</h3>
             <ResponsiveContainer width="100%" height={500}>
               <RadarChart data={comparisonData.chartData}>
                 <PolarGrid />
@@ -210,15 +211,15 @@ function PokemonComparison() {
                 <Radar
                   name={comparisonData.p1Name}
                   dataKey={comparisonData.p1Name}
-                  stroke="#e74c3c"
-                  fill="#e74c3c"
+                  stroke={COLORS.red}
+                  fill={COLORS.red}
                   fillOpacity={0.3}
                 />
                 <Radar
                   name={comparisonData.p2Name}
                   dataKey={comparisonData.p2Name}
-                  stroke="#3498db"
-                  fill="#3498db"
+                  stroke={COLORS.blue}
+                  fill={COLORS.blue}
                   fillOpacity={0.3}
                 />
                 <Legend />
@@ -228,14 +229,14 @@ function PokemonComparison() {
 
           {/* Stats Comparison Table */}
           <div className="my-[40px]">
-            <h3 className="text-[#2c3e50] text-[1.5em] mb-5 text-center">Detailed Stats Comparison</h3>
+            <h3 className="text-pokemon-dark text-[1.5em] mb-5 text-center">Detailed Stats Comparison</h3>
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className={`${tdBase} bg-[#34495e] text-white font-bold`}>Stat</th>
-                  <th className={`${p1Col} bg-[#34495e] text-white font-bold`}>{comparisonData.pokemon1.name}</th>
-                  <th className={`${p2Col} bg-[#34495e] text-white font-bold`}>{comparisonData.pokemon2.name}</th>
-                  <th className={`${tdBase} bg-[#34495e] text-white font-bold`}>Difference</th>
+                  <th className={`${tdBase} bg-pokemon-dark-alt text-white font-bold`}>Stat</th>
+                  <th className={`${p1Col} bg-pokemon-dark-alt text-white font-bold`}>{comparisonData.pokemon1.name}</th>
+                  <th className={`${p2Col} bg-pokemon-dark-alt text-white font-bold`}>{comparisonData.pokemon2.name}</th>
+                  <th className={`${tdBase} bg-pokemon-dark-alt text-white font-bold`}>Difference</th>
                 </tr>
               </thead>
               <tbody>
@@ -243,10 +244,10 @@ function PokemonComparison() {
                   const diff = row.value1 - row.value2;
                   const percentileDiff = row[comparisonData.p1Name] - row[comparisonData.p2Name];
                   const diffClass = diff > 0
-                    ? `${tdBase} text-[#27ae60] font-bold`
+                    ? `${tdBase} text-pokemon-green font-bold`
                     : diff < 0
-                    ? `${tdBase} text-[#e74c3c] font-bold`
-                    : `${tdBase} text-[#95a5a6]`;
+                    ? `${tdBase} text-pokemon-red font-bold`
+                    : `${tdBase} text-pokemon-neutral`;
                   return (
                     <tr key={idx}>
                       <td className={tdBase}><strong>{row.stat}</strong></td>
@@ -262,13 +263,13 @@ function PokemonComparison() {
                   const total1 = comparisonData.pokemon1.stats.reduce((a, b) => a + b, 0);
                   const total2 = comparisonData.pokemon2.stats.reduce((a, b) => a + b, 0);
                   const totalDiff = total1 - total2;
-                  const totalDiffClass = totalDiff > 0 ? 'text-[#27ae60]' : 'text-[#e74c3c]';
+                  const totalDiffClass = totalDiff > 0 ? 'text-pokemon-green' : 'text-pokemon-red';
                   return (
                     <tr>
-                      <td className={`${tdBase} bg-[#ecf0f1] font-bold`}><strong>Total</strong></td>
+                      <td className={`${tdBase} bg-pokemon-border font-bold`}><strong>Total</strong></td>
                       <td className={`${p1Col} font-bold`}><strong>{total1}</strong></td>
                       <td className={`${p2Col} font-bold`}><strong>{total2}</strong></td>
-                      <td className={`${tdBase} bg-[#ecf0f1] font-bold ${totalDiffClass}`}><strong>{totalDiff}</strong></td>
+                      <td className={`${tdBase} bg-pokemon-border font-bold ${totalDiffClass}`}><strong>{totalDiff}</strong></td>
                     </tr>
                   );
                 })()}

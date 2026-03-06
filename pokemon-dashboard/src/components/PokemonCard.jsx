@@ -16,7 +16,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
   const headerBg = TYPE_COLORS[pokemon.type1] || accentColor;
   return (
     <div
-      className={`rounded-[10px] overflow-hidden flex flex-col border-[3px] border-solid bg-[#fffdf0] shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${className}`}
+      className={`rounded-[10px] overflow-hidden flex flex-col border-[3px] border-solid bg-pokemon-card-bg shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${className}`}
       style={{ borderColor: accentColor }}
     >
       <div
@@ -26,7 +26,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
         <div className="flex justify-between items-center mb-1">
           {pokemon.evolve_from
             ? <button
-                className="bg-black/15 border-0 py-[2px] px-[6px] text-white/90 cursor-pointer text-[0.78em] font-[inherit] rounded-[4px] underline hover:text-[#2980b9]"
+                className="bg-black/15 border-0 py-[2px] px-[6px] text-white/90 cursor-pointer text-[0.78em] font-[inherit] rounded-[4px] underline hover:text-pokemon-blue-dark"
                 onClick={() => onEvoClick(pokemon.evolve_from)}
               >
                 ← {pokemon.evolve_from}
@@ -58,21 +58,21 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
       <div className="px-[15px] py-[12px] flex-1">
         {statLabels.map((label, i) => (
           <div key={label} className="grid grid-cols-[100px_1fr_38px] items-center gap-2 mb-[7px]">
-            <span className="text-[0.75em] font-bold text-[#34495e] whitespace-nowrap">{label}</span>
-            <div className="bg-[#ecf0f1] rounded-[4px] h-2 overflow-hidden">
+            <span className="text-[0.75em] font-bold text-pokemon-dark-alt whitespace-nowrap">{label}</span>
+            <div className="bg-pokemon-border rounded-[4px] h-2 overflow-hidden">
               <div
                 className="h-full rounded-[4px] min-w-[2px]"
                 style={{ width: `${pokemon.percentiles[i]}%`, backgroundColor: accentColor }}
               />
             </div>
-            <span className="text-[0.78em] text-right text-[#2c3e50] font-bold">{pokemon.stats[i]}</span>
+            <span className="text-[0.78em] text-right text-pokemon-dark font-bold">{pokemon.stats[i]}</span>
           </div>
         ))}
       </div>
 
       {pokemon.weaknesses.length > 0 && (
         <div className="px-[15px] pt-[10px] pb-[14px] border-t border-[rgba(0,0,0,0.08)] mt-auto">
-          <p className="text-[0.75em] font-bold text-[#7f8c8d] m-0 mb-[6px] uppercase tracking-[0.05em]">Weak to:</p>
+          <p className="text-[0.75em] font-bold text-pokemon-muted m-0 mb-[6px] uppercase tracking-[0.05em]">Weak to:</p>
           <div className="flex flex-wrap gap-[5px]">
             {pokemon.weaknesses.map(type => (
               <span

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay, TYPE_COLORS } from './PokemonCard';
+import { COLORS } from '../colors';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -11,7 +12,7 @@ function EvoLink({ name, onClick }) {
   if (!name) return <span>None</span>;
   return (
     <button
-      className="bg-transparent border-0 p-0 text-[#3498db] cursor-pointer text-[inherit] font-[inherit] underline hover:text-[#2980b9]"
+      className="bg-transparent border-0 p-0 text-pokemon-blue cursor-pointer text-[inherit] font-[inherit] underline hover:text-pokemon-blue-dark"
       onClick={() => onClick(name)}
     >
       {name}
@@ -104,12 +105,12 @@ function PokemonDashboard() {
       .slice(0, 6),
   });
 
-  const sectionHeadingClass = 'text-[#2c3e50] border-b-2 border-[#3498db] pb-[10px] mb-5';
+  const sectionHeadingClass = 'text-pokemon-dark border-b-2 border-pokemon-blue pb-[10px] mb-5';
 
   return (
-    <div className="max-w-[1400px] mx-auto p-5 [font-family:'Arial',sans-serif]">
+    <div className="max-w-[1400px] mx-auto p-5">
       <header className="text-center mb-[30px]">
-        <h1 className="text-[#2c3e50] mb-5">Pokemon Dashboard</h1>
+        <h1 className="text-pokemon-dark mb-5">Pokemon Dashboard</h1>
 
         <div className="flex gap-[15px] justify-center items-center">
           <PokemonSelect
@@ -121,7 +122,7 @@ function PokemonDashboard() {
 
           <button
             onClick={handleRandomPokemon}
-            className="py-[10px] px-5 text-base bg-[#e74c3c] text-white border-0 rounded-[5px] cursor-pointer transition-colors duration-300 hover:bg-[#c0392b]"
+            className="py-[10px] px-5 text-base bg-pokemon-red text-white border-0 rounded-[5px] cursor-pointer transition-colors duration-300 hover:bg-pokemon-red-dark"
           >
             Random Pokemon
           </button>
@@ -129,13 +130,13 @@ function PokemonDashboard() {
       </header>
 
       {error && (
-        <div className="bg-[#fdecea] border border-[#e74c3c] rounded-[8px] text-[#c0392b] py-[14px] px-5 mb-5 text-base" role="alert">
+        <div className="bg-pokemon-red-light border border-pokemon-red rounded-[8px] text-pokemon-red-dark py-[14px] px-5 mb-5 text-base" role="alert">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="text-center py-[50px] text-[1.5em] text-[#7f8c8d]">Loading...</div>
+        <div className="text-center py-[50px] text-[1.5em] text-pokemon-muted">Loading...</div>
       )}
 
       {!loading && !error && pokemonData && statsData && (
@@ -144,7 +145,7 @@ function PokemonDashboard() {
             <PokemonCardDisplay
               pokemon={buildCardPokemon(pokemonData, statsData)}
               statLabels={statsData.map(s => s.stat)}
-              accentColor={TYPE_COLORS[pokemonData['Type 1']] || '#3498db'}
+              accentColor={TYPE_COLORS[pokemonData['Type 1']] || COLORS.blue}
               onEvoClick={setSelectedPokemon}
             />
           </div>
@@ -160,8 +161,8 @@ function PokemonDashboard() {
                   <Radar
                     name="Percentile"
                     dataKey="percentile"
-                    stroke="#4393c3"
-                    fill="#4393c3"
+                    stroke={COLORS.blue}
+                    fill={COLORS.blue}
                     fillOpacity={0.5}
                   />
                   <Legend />
@@ -173,17 +174,17 @@ function PokemonDashboard() {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="p-[10px] text-left border-b border-[#ecf0f1] bg-[#3498db] text-white font-bold">Stat</th>
-                      <th className="p-[10px] text-left border-b border-[#ecf0f1] bg-[#3498db] text-white font-bold">Value</th>
-                      <th className="p-[10px] text-left border-b border-[#ecf0f1] bg-[#3498db] text-white font-bold">Percentile</th>
+                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-blue text-white font-bold">Stat</th>
+                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-blue text-white font-bold">Value</th>
+                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-blue text-white font-bold">Percentile</th>
                     </tr>
                   </thead>
                   <tbody>
                     {statsData.map((stat, idx) => (
-                      <tr key={idx} className="hover:bg-[#f8f9fa]">
-                        <td className="p-[10px] text-left border-b border-[#ecf0f1]">{stat.stat}</td>
-                        <td className="p-[10px] text-left border-b border-[#ecf0f1]">{stat.value}</td>
-                        <td className="p-[10px] text-left border-b border-[#ecf0f1]">{stat.percentile.toFixed(1)}%</td>
+                      <tr key={idx} className="hover:bg-pokemon-surface">
+                        <td className="p-[10px] text-left border-b border-pokemon-border">{stat.stat}</td>
+                        <td className="p-[10px] text-left border-b border-pokemon-border">{stat.value}</td>
+                        <td className="p-[10px] text-left border-b border-pokemon-border">{stat.percentile.toFixed(1)}%</td>
                       </tr>
                     ))}
                   </tbody>
@@ -192,7 +193,7 @@ function PokemonDashboard() {
             </div>
 
             <div>
-              <div className="bg-[#f8f9fa] p-5 rounded-[8px] mb-5">
+              <div className="bg-pokemon-surface p-5 rounded-[8px] mb-5">
                 <h3 className={sectionHeadingClass}>Evolution Chain</h3>
                 <table className="w-full border-collapse">
                   <tbody>
@@ -216,7 +217,7 @@ function PokemonDashboard() {
                 </table>
               </div>
 
-              <div className="bg-[#f8f9fa] p-5 rounded-[8px] mb-5">
+              <div className="bg-pokemon-surface p-5 rounded-[8px] mb-5">
                 <h3 className={sectionHeadingClass}>Additional Info</h3>
                 <table className="w-full border-collapse">
                   <tbody>
