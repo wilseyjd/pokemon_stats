@@ -237,8 +237,8 @@ function PokemonComparison() {
               <thead>
                 <tr>
                   <th className={`${tdBase} bg-pokemon-dark-alt text-white font-bold`}>Stat</th>
-                  <th className={`${p1Col} bg-pokemon-dark-alt text-white font-bold`}>{comparisonData.pokemon1.name}</th>
-                  <th className={`${p2Col} bg-pokemon-dark-alt text-white font-bold`}>{comparisonData.pokemon2.name}</th>
+                  <th className={`${tdBase} bg-pokemon-dark-alt text-white font-bold`}>{comparisonData.pokemon1.name}</th>
+                  <th className={`${tdBase} bg-pokemon-dark-alt text-white font-bold`}>{comparisonData.pokemon2.name}</th>
                   <th className={`${tdBase} bg-pokemon-dark-alt text-white font-bold`}>Difference</th>
                 </tr>
               </thead>
