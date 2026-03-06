@@ -9,11 +9,18 @@ export const TYPE_COLORS = {
   Dark: '#705848', Steel: '#B8B8D0', Fairy: '#EE99AC',
 };
 
+// Data stores types in ALL CAPS — normalize to title case for lookup
+export function getTypeColor(type) {
+  if (!type) return '#888';
+  const titleCase = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+  return TYPE_COLORS[titleCase] || '#888';
+}
+
 // Expected pokemon shape:
 //   name, pokedex_number, type1, type2, image,
 //   stats[],  percentiles[], evolve_from, weaknesses[]
 export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClick, className = '' }) {
-  const headerBg = TYPE_COLORS[pokemon.type1] || accentColor;
+  const headerBg = accentColor;
   return (
     <div
       className={`rounded-[10px] overflow-hidden flex flex-col border-[3px] border-solid bg-pokemon-card-bg shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${className}`}
@@ -40,7 +47,15 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
       </div>
 
       <div className="flex justify-center items-center p-[15px] bg-white/65 min-h-[170px]">
-        <img className="w-[140px] h-[140px] object-contain" src={pokemon.image} alt={pokemon.name} />
+        <img
+          className="w-[140px] h-[140px] object-contain"
+          src={pokemon.image}
+          alt={pokemon.name}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="140" height="140" rx="8" fill="%23ecf0f1"/><text x="70" y="65" text-anchor="middle" font-family="sans-serif" font-size="32">?</text><text x="70" y="90" text-anchor="middle" font-family="sans-serif" font-size="11" fill="%237f8c8d">No Image</text></svg>';
+          }}
+        />
       </div>
 
       <div className="flex gap-2 justify-center px-[15px] py-[10px] border-b border-[rgba(0,0,0,0.08)]">
@@ -48,7 +63,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
           <span
             key={type}
             className="text-white py-[3px] px-[10px] rounded-[12px] text-[0.78em] font-bold [text-shadow:0_1px_1px_rgba(0,0,0,0.2)] tracking-[0.03em]"
-            style={{ backgroundColor: TYPE_COLORS[type] || '#888' }}
+            style={{ backgroundColor: getTypeColor(type) }}
           >
             {type}
           </span>
@@ -78,7 +93,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
               <span
                 key={type}
                 className="text-white py-[3px] px-[10px] rounded-[12px] text-[0.78em] font-bold [text-shadow:0_1px_1px_rgba(0,0,0,0.2)] tracking-[0.03em]"
-                style={{ backgroundColor: TYPE_COLORS[type] || '#888' }}
+                style={{ backgroundColor: getTypeColor(type) }}
               >
                 {type}
               </span>

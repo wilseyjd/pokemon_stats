@@ -121,8 +121,8 @@ function PokemonComparison() {
       <header className="text-center mb-[30px]">
         <h1 className="text-pokemon-dark mb-[30px] text-[2.5em]">Pokemon Comparison</h1>
 
-        <div className="flex gap-5 justify-center items-center flex-wrap max-[968px]:flex-col">
-          <div className="flex gap-[10px] items-center">
+        <div className="flex gap-5 justify-center items-end flex-wrap max-[968px]:flex-col">
+          <div className="flex gap-[10px] items-end">
             <PokemonSelect
               id="pokemon1-select"
               label="Pokemon 1"
@@ -145,7 +145,7 @@ function PokemonComparison() {
             <span aria-hidden="true">⇄</span>
           </button>
 
-          <div className="flex gap-[10px] items-center">
+          <div className="flex gap-[10px] items-end">
             <PokemonSelect
               id="pokemon2-select"
               label="Pokemon 2"
@@ -168,7 +168,10 @@ function PokemonComparison() {
       )}
 
       {loading && (
-        <div className="text-center py-[50px] text-[1.5em] text-pokemon-muted">Loading comparison...</div>
+        <div className="flex flex-col items-center justify-center py-[50px] gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-pokemon-border border-t-pokemon-blue animate-spin" />
+          <p className="text-pokemon-muted text-[1.1em] animate-pulse">Loading comparison...</p>
+        </div>
       )}
 
       {!loading && pokemon1 && pokemon2 && pokemon1 === pokemon2 && (

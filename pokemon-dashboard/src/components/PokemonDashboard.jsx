@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
-import { PokemonCardDisplay, TYPE_COLORS } from './PokemonCard';
+import { PokemonCardDisplay } from './PokemonCard';
 import { COLORS } from '../colors';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -136,7 +136,10 @@ function PokemonDashboard() {
       )}
 
       {loading && (
-        <div className="text-center py-[50px] text-[1.5em] text-pokemon-muted">Loading...</div>
+        <div className="flex flex-col items-center justify-center py-[50px] gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-pokemon-border border-t-pokemon-blue animate-spin" />
+          <p className="text-pokemon-muted text-[1.1em] animate-pulse">Loading...</p>
+        </div>
       )}
 
       {!loading && !error && pokemonData && statsData && (
@@ -145,7 +148,7 @@ function PokemonDashboard() {
             <PokemonCardDisplay
               pokemon={buildCardPokemon(pokemonData, statsData)}
               statLabels={statsData.map(s => s.stat)}
-              accentColor={TYPE_COLORS[pokemonData['Type 1']] || COLORS.blue}
+              accentColor={COLORS.blue}
               onEvoClick={setSelectedPokemon}
             />
           </div>
