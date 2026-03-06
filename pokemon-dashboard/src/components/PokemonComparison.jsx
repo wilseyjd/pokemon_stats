@@ -248,14 +248,17 @@ function PokemonComparison() {
                     : diff < 0
                     ? `${tdBase} text-pokemon-red font-bold`
                     : `${tdBase} text-pokemon-neutral`;
+                  const diffDisplay = diff > 0
+                    ? `▲ +${diff} (+${percentileDiff.toFixed(1)}%)`
+                    : diff < 0
+                    ? `▼ ${diff} (${percentileDiff.toFixed(1)}%)`
+                    : '= 0';
                   return (
                     <tr key={idx}>
                       <td className={tdBase}><strong>{row.stat}</strong></td>
                       <td className={p1Col}>{row.value1} ({row[comparisonData.p1Name].toFixed(1)}%)</td>
                       <td className={p2Col}>{row.value2} ({row[comparisonData.p2Name].toFixed(1)}%)</td>
-                      <td className={diffClass}>
-                        {diff > 0 ? '+' : ''}{diff} ({percentileDiff > 0 ? '+' : ''}{percentileDiff.toFixed(1)}%)
-                      </td>
+                      <td className={diffClass}>{diffDisplay}</td>
                     </tr>
                   );
                 })}
@@ -263,13 +266,14 @@ function PokemonComparison() {
                   const total1 = comparisonData.pokemon1.stats.reduce((a, b) => a + b, 0);
                   const total2 = comparisonData.pokemon2.stats.reduce((a, b) => a + b, 0);
                   const totalDiff = total1 - total2;
-                  const totalDiffClass = totalDiff > 0 ? 'text-pokemon-green' : 'text-pokemon-red';
+                  const totalDiffClass = totalDiff > 0 ? 'text-pokemon-green' : totalDiff < 0 ? 'text-pokemon-red' : 'text-pokemon-neutral';
+                  const totalDiffDisplay = totalDiff > 0 ? `▲ +${totalDiff}` : totalDiff < 0 ? `▼ ${totalDiff}` : '= 0';
                   return (
                     <tr>
                       <td className={`${tdBase} bg-pokemon-border font-bold`}><strong>Total</strong></td>
                       <td className={`${p1Col} font-bold`}><strong>{total1}</strong></td>
                       <td className={`${p2Col} font-bold`}><strong>{total2}</strong></td>
-                      <td className={`${tdBase} bg-pokemon-border font-bold ${totalDiffClass}`}><strong>{totalDiff}</strong></td>
+                      <td className={`${tdBase} bg-pokemon-border font-bold ${totalDiffClass}`}><strong>{totalDiffDisplay}</strong></td>
                     </tr>
                   );
                 })()}
