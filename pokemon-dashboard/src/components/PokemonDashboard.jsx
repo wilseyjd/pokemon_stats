@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import PokemonSelect from './PokemonSelect';
-import { PokemonCardDisplay, getTypeColor } from './PokemonCard';
+import { PokemonCardDisplay } from './PokemonCard';
 import { COLORS } from '../colors';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -148,7 +148,7 @@ function PokemonDashboard() {
             <PokemonCardDisplay
               pokemon={buildCardPokemon(pokemonData, statsData)}
               statLabels={statsData.map(s => s.stat)}
-              accentColor={getTypeColor(pokemonData['Type 1']) !== '#888' ? getTypeColor(pokemonData['Type 1']) : COLORS.blue}
+              accentColor={COLORS.blue}
               onEvoClick={setSelectedPokemon}
             />
           </div>

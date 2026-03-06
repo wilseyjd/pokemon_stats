@@ -20,7 +20,7 @@ export function getTypeColor(type) {
 //   name, pokedex_number, type1, type2, image,
 //   stats[],  percentiles[], evolve_from, weaknesses[]
 export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClick, className = '' }) {
-  const headerBg = getTypeColor(pokemon.type1) !== '#888' ? getTypeColor(pokemon.type1) : accentColor;
+  const headerBg = accentColor;
   return (
     <div
       className={`rounded-[10px] overflow-hidden flex flex-col border-[3px] border-solid bg-pokemon-card-bg shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${className}`}
