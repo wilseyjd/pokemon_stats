@@ -121,8 +121,8 @@ function PokemonComparison() {
       <header className="text-center mb-[30px]">
         <h1 className="text-pokemon-dark mb-[30px] text-[2.5em]">Pokemon Comparison</h1>
 
-        <div className="flex gap-5 justify-center items-center flex-wrap max-[968px]:flex-col">
-          <div className="flex gap-[10px] items-center">
+        <div className="flex gap-5 justify-center items-end flex-wrap max-[968px]:flex-col">
+          <div className="flex gap-[10px] items-end">
             <PokemonSelect
               id="pokemon1-select"
               label="Pokemon 1"
@@ -145,7 +145,7 @@ function PokemonComparison() {
             <span aria-hidden="true">⇄</span>
           </button>
 
-          <div className="flex gap-[10px] items-center">
+          <div className="flex gap-[10px] items-end">
             <PokemonSelect
               id="pokemon2-select"
               label="Pokemon 2"
