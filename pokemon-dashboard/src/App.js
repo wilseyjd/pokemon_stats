@@ -15,12 +15,12 @@ function App() {
   const navLinkClass = ({ isActive }) =>
     `py-[15px] px-[30px] text-lg font-bold rounded-[10px] cursor-pointer transition-all duration-300 shadow-md no-underline hover:-translate-y-[2px] hover:shadow-lg ${
       isActive
-        ? 'bg-gradient-to-br from-[#3498db] to-[#2980b9] text-white'
-        : 'bg-white text-[#2c3e50]'
+        ? 'bg-gradient-to-br from-pokemon-blue to-pokemon-blue-dark text-white'
+        : 'bg-white text-pokemon-dark'
     }`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#d4e2fc] to-[#d4e0f0] p-5">
+    <div className="min-h-screen bg-gradient-to-br from-pokemon-bg-from to-pokemon-bg-to p-5">
       <nav className="flex justify-center gap-5 mb-[30px]">
         <NavLink to={dashboardLink} end className={navLinkClass}>
           Single Pokemon

@@ -4,7 +4,7 @@
 
 @layer base {
   *:focus-visible {
-    outline: 3px solid #3498db;
+    outline: 3px solid theme('colors.pokemon.blue');
     outline-offset: 2px;
   }
 }
