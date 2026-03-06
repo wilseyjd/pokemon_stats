@@ -9,11 +9,16 @@ export const TYPE_COLORS = {
   Dark: '#705848', Steel: '#B8B8D0', Fairy: '#EE99AC',
 };
 
-// Data stores types in ALL CAPS — normalize to title case for lookup
+// Data stores types in ALL CAPS — normalize to title case for lookup and display
 export function getTypeColor(type) {
   if (!type) return '#888';
   const titleCase = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
   return TYPE_COLORS[titleCase] || '#888';
+}
+
+export function displayType(type) {
+  if (!type) return '';
+  return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 }
 
 // Expected pokemon shape:
@@ -33,10 +38,10 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
         <div className="flex justify-between items-center mb-1">
           {pokemon.evolve_from
             ? <button
-                className="bg-black/15 border-0 py-[2px] px-[6px] text-white/90 cursor-pointer text-[0.78em] font-[inherit] rounded-[4px] underline hover:text-pokemon-blue-dark"
+                className="bg-black/20 border-0 py-[2px] px-[6px] text-white/90 cursor-pointer text-[0.78em] font-[inherit] rounded-[4px] transition-colors hover:bg-black/35 hover:text-white"
                 onClick={() => onEvoClick(pokemon.evolve_from)}
               >
-                ← {pokemon.evolve_from}
+                ‹ {pokemon.evolve_from}
               </button>
             : <span />
           }
@@ -65,7 +70,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
             className="text-white py-[3px] px-[10px] rounded-[12px] text-[0.78em] font-bold [text-shadow:0_1px_1px_rgba(0,0,0,0.2)] tracking-[0.03em]"
             style={{ backgroundColor: getTypeColor(type) }}
           >
-            {type}
+            {displayType(type)}
           </span>
         ))}
       </div>
@@ -95,7 +100,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
                 className="text-white py-[3px] px-[10px] rounded-[12px] text-[0.78em] font-bold [text-shadow:0_1px_1px_rgba(0,0,0,0.2)] tracking-[0.03em]"
                 style={{ backgroundColor: getTypeColor(type) }}
               >
-                {type}
+                {displayType(type)}
               </span>
             ))}
           </div>
