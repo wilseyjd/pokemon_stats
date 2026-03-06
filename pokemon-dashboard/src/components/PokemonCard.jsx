@@ -40,7 +40,15 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
       </div>
 
       <div className="flex justify-center items-center p-[15px] bg-white/65 min-h-[170px]">
-        <img className="w-[140px] h-[140px] object-contain" src={pokemon.image} alt={pokemon.name} />
+        <img
+          className="w-[140px] h-[140px] object-contain"
+          src={pokemon.image}
+          alt={pokemon.name}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="140" height="140" rx="8" fill="%23ecf0f1"/><text x="70" y="65" text-anchor="middle" font-family="sans-serif" font-size="32">?</text><text x="70" y="90" text-anchor="middle" font-family="sans-serif" font-size="11" fill="%237f8c8d">No Image</text></svg>';
+          }}
+        />
       </div>
 
       <div className="flex gap-2 justify-center px-[15px] py-[10px] border-b border-[rgba(0,0,0,0.08)]">
