@@ -136,7 +136,10 @@ function PokemonDashboard() {
       )}
 
       {loading && (
-        <div className="text-center py-[50px] text-[1.5em] text-pokemon-muted">Loading...</div>
+        <div className="flex flex-col items-center justify-center py-[50px] gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-pokemon-border border-t-pokemon-blue animate-spin" />
+          <p className="text-pokemon-muted text-[1.1em] animate-pulse">Loading...</p>
+        </div>
       )}
 
       {!loading && !error && pokemonData && statsData && (
