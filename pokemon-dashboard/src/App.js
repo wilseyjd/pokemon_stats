@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, NavLink, useSearchParams } from 'react-router-dom';
 import PokemonDashboard from './components/PokemonDashboard';
 import PokemonComparison from './components/PokemonComparison';
+import Explore from './components/Explore';
 function App() {
   const [searchParams] = useSearchParams();
 
@@ -28,11 +29,15 @@ function App() {
         <NavLink to={compareLink} className={navLinkClass}>
           Compare Pokemon
         </NavLink>
+        <NavLink to="/explore" className={navLinkClass}>
+          Explore
+        </NavLink>
       </nav>
 
       <Routes>
         <Route path="/" element={<PokemonDashboard />} />
         <Route path="/compare" element={<PokemonComparison />} />
+        <Route path="/explore" element={<Explore />} />
       </Routes>
     </div>
   );
