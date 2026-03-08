@@ -127,5 +127,61 @@ def get_random_pokemon():
     return jsonify({'name': random_pokemon})
 
 
+@app.route('/api/explore', methods=['GET'])
+def get_all_types():
+    """Get sorted list of all unique Pokemon types"""
+    types_1 = df_evolve['Type 1'].dropna().unique().tolist()
+    types_2 = df_evolve['Type 2'].dropna().unique().tolist()
+    return jsonify(sorted(set(types_1 + types_2)))
+
+
+_STAT_COLS = ['HP', 'Attack', 'Defense', 'Special Attack', 'Special Defense', 'Speed']
+
+
+@app.route('/api/stats/leaders', methods=['GET'])
+def get_stat_leaders():
+    """Get top 10 Pokemon per stat with optional type and mega filtering"""
+    types_param = request.args.get('types', '')
+    logic = request.args.get('logic', 'OR').upper()
+    exclude_mega = request.args.get('exclude_mega', 'false').lower() == 'true'
+
+    df_filtered = df_evolve.copy()
+
+    if exclude_mega:
+        df_filtered = df_filtered[~df_filtered['Name'].str.contains('Mega', case=True, na=False)]
+
+    if types_param:
+        selected = [t.strip() for t in types_param.split(',') if t.strip()]
+        if logic == 'AND':
+            mask = pd.Series([True] * len(df_filtered), index=df_filtered.index)
+            for t in selected:
+                mask &= (df_filtered['Type 1'].str.upper() == t.upper()) | \
+                        (df_filtered['Type 2'].str.upper() == t.upper())
+        else:  # OR
+            mask = pd.Series([False] * len(df_filtered), index=df_filtered.index)
+            for t in selected:
+                mask |= (df_filtered['Type 1'].str.upper() == t.upper()) | \
+                        (df_filtered['Type 2'].str.upper() == t.upper())
+        df_filtered = df_filtered[mask]
+
+    df_filtered = df_filtered.copy()
+    df_filtered['All-Around'] = df_filtered[_STAT_COLS].sum(axis=1)
+
+    result = {}
+    for col in _STAT_COLS + ['All-Around']:
+        top10 = df_filtered.nlargest(10, col)[['Name', col, 'Type 1', 'Type 2', 'Image']]
+        result[col] = [
+            {
+                'name': row['Name'],
+                'value': int(row[col]),
+                'type1': row['Type 1'] if pd.notna(row['Type 1']) else None,
+                'type2': row['Type 2'] if pd.notna(row['Type 2']) else None,
+                'image': row['Image'] if pd.notna(row['Image']) else None,
+            }
+            for _, row in top10.iterrows()
+        ]
+    return jsonify({'leaders': result, 'count': len(df_filtered)})
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
