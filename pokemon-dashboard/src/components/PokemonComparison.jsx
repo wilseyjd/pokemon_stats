@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay } from './PokemonCard';
 import { COLORS } from '../colors';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+// Build ordered evolution chain from the snake_case fields returned by the compare API
+function buildEvoChain(p) {
+  const chain = [];
+  if (p.base_evolution) chain.push(p.base_evolution);
+  if (p.evolve_from && !chain.includes(p.evolve_from)) chain.push(p.evolve_from);
+  if (!chain.includes(p.name)) chain.push(p.name);
+  if (p.evolve_to && !chain.includes(p.evolve_to)) chain.push(p.evolve_to);
+  if (p.final_evolution && !chain.includes(p.final_evolution)) chain.push(p.final_evolution);
+  return chain;
+}
+
+// Augment the API pokemon shape with fields PokemonCardDisplay needs
+function enrichPokemon(p) {
+  return {
+    ...p,
+    total_stats: p.stats.reduce((a, b) => a + b, 0),
+    evo_chain: buildEvoChain(p),
+  };
+}
 
 const tdBase = 'p-3 text-left border-b border-pokemon-border';
 const p1Col = `${tdBase} bg-pokemon-red/10`;
@@ -110,56 +130,10 @@ function PokemonComparison() {
     }
   };
 
-  const handleSwap = () => {
-    setSearchParams({ p1: pokemon2, p2: pokemon1 }, { replace: true });
-  };
-
   const randomBtnBase = 'py-[10px] px-5 text-sm text-white border-0 rounded-[5px] cursor-pointer transition-all duration-300';
 
   return (
-    <div className="max-w-[1400px] mx-auto p-5">
-      <header className="text-center mb-[30px]">
-        <h1 className="text-pokemon-dark mb-[30px] text-[2.5em]">Pokemon Comparison</h1>
-
-        <div className="flex gap-5 justify-center items-end flex-wrap max-[968px]:flex-col">
-          <div className="flex gap-[10px] items-end">
-            <PokemonSelect
-              id="pokemon1-select"
-              label="Pokemon 1"
-              value={pokemon1}
-              options={allPokemon}
-              onChange={setPokemon1}
-              accentColor={COLORS.red}
-            />
-            <button onClick={handleRandomPokemon1} className={`${randomBtnBase} bg-pokemon-red hover:bg-pokemon-red-dark`}>
-              Random
-            </button>
-          </div>
-
-          {/* JEF-76: aria-label instead of title for screen reader support */}
-          <button
-            onClick={handleSwap}
-            className="py-[10px] px-5 text-[24px] bg-pokemon-neutral text-white border-0 rounded-full cursor-pointer transition-all duration-300 w-[50px] h-[50px] hover:bg-pokemon-muted hover:rotate-180"
-            aria-label="Swap Pokémon"
-          >
-            <span aria-hidden="true">⇄</span>
-          </button>
-
-          <div className="flex gap-[10px] items-end">
-            <PokemonSelect
-              id="pokemon2-select"
-              label="Pokemon 2"
-              value={pokemon2}
-              options={allPokemon}
-              onChange={setPokemon2}
-              accentColor={COLORS.blue}
-            />
-            <button onClick={handleRandomPokemon2} className={`${randomBtnBase} bg-pokemon-blue hover:bg-pokemon-blue-dark`}>
-              Random
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="max-w-[1400px] mx-auto">
 
       {error && (
         <div className="bg-pokemon-red-light border border-pokemon-red rounded-[8px] text-pokemon-red-dark py-[14px] px-5 mb-5 text-base" role="alert">
@@ -183,24 +157,54 @@ function PokemonComparison() {
       {!loading && !error && comparisonData && (
         <div className="bg-white rounded-[10px] shadow-[0_4px_6px_rgba(0,0,0,0.1)] p-[30px]">
           {/* Pokemon Cards */}
-          <div className="flex justify-between items-stretch mb-[40px] gap-[30px] max-[968px]:flex-col max-[968px]:items-stretch">
-            <PokemonCardDisplay
-              pokemon={comparisonData.pokemon1}
-              statLabels={comparisonData.stat_labels}
-              accentColor={COLORS.red}
-              onEvoClick={setPokemon1}
-              className="flex-1"
-            />
-            <div className="text-[3em] font-bold text-pokemon-neutral px-5 flex items-center max-[968px]:justify-center max-[968px]:py-5 max-[968px]:px-0">
+          <div className="flex justify-center items-start mb-[40px] gap-[30px] max-[968px]:flex-col max-[968px]:items-center">
+            <div className="flex flex-col gap-3 w-[360px] shrink-0">
+              <div className="flex gap-[10px] items-end">
+                <PokemonSelect
+                  id="pokemon1-select"
+                  label="Pokemon 1"
+                  value={pokemon1}
+                  options={allPokemon}
+                  onChange={setPokemon1}
+                  accentColor={COLORS.red}
+                />
+                <button onClick={handleRandomPokemon1} className={`${randomBtnBase} bg-pokemon-red hover:bg-pokemon-red-dark`}>
+                  Random
+                </button>
+              </div>
+              <PokemonCardDisplay
+                pokemon={enrichPokemon(comparisonData.pokemon1)}
+                statLabels={comparisonData.stat_labels}
+                accentColor={COLORS.red}
+                onEvoClick={setPokemon1}
+              />
+            </div>
+
+            <div className="text-[3em] font-bold text-pokemon-neutral px-5 flex items-center self-center max-[968px]:py-5 max-[968px]:px-0">
               VS
             </div>
-            <PokemonCardDisplay
-              pokemon={comparisonData.pokemon2}
-              statLabels={comparisonData.stat_labels}
-              accentColor={COLORS.blue}
-              onEvoClick={setPokemon2}
-              className="flex-1"
-            />
+
+            <div className="flex flex-col gap-3 w-[360px] shrink-0">
+              <div className="flex gap-[10px] items-end">
+                <PokemonSelect
+                  id="pokemon2-select"
+                  label="Pokemon 2"
+                  value={pokemon2}
+                  options={allPokemon}
+                  onChange={setPokemon2}
+                  accentColor={COLORS.blue}
+                />
+                <button onClick={handleRandomPokemon2} className={`${randomBtnBase} bg-pokemon-blue hover:bg-pokemon-blue-dark`}>
+                  Random
+                </button>
+              </div>
+              <PokemonCardDisplay
+                pokemon={enrichPokemon(comparisonData.pokemon2)}
+                statLabels={comparisonData.stat_labels}
+                accentColor={COLORS.blue}
+                onEvoClick={setPokemon2}
+              />
+            </div>
           </div>
 
           {/* Radar Chart */}
@@ -224,6 +228,19 @@ function PokemonComparison() {
                   stroke={COLORS.blue}
                   fill={COLORS.blue}
                   fillOpacity={0.3}
+                />
+                <Tooltip
+                  formatter={(value) => `${value.toFixed(1)}%`}
+                  contentStyle={{
+                    backgroundColor: '#2c3e50',
+                    border: 'none',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    fontSize: '0.82rem',
+                    padding: '6px 10px',
+                  }}
+                  itemStyle={{ color: '#fff' }}
+                  labelStyle={{ color: '#fff', fontWeight: 'bold', marginBottom: '2px' }}
                 />
                 <Legend />
               </RadarChart>

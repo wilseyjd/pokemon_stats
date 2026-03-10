@@ -111,11 +111,6 @@ export default function Explore() {
 
   return (
     <div className="max-w-[1400px] mx-auto">
-      <header className="mb-[24px]">
-        <h1 className="text-[2em] font-bold text-pokemon-dark m-0 mb-1">Explore</h1>
-        <p className="text-pokemon-muted m-0">Filter and rank Pokémon by type, stat, and more.</p>
-      </header>
-
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-[8px] px-4 py-3 mb-6 text-sm">
           {error}
