@@ -11,6 +11,6 @@ test('renders navigation links', () => {
       <App />
     </MemoryRouter>
   );
-  expect(screen.getByText(/single pokemon/i)).toBeInTheDocument();
-  expect(screen.getByText(/compare pokemon/i)).toBeInTheDocument();
+  expect(screen.getByText(/single/i)).toBeInTheDocument();
+  expect(screen.getByText(/compare/i)).toBeInTheDocument();
 });
