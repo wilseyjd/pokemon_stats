@@ -210,10 +210,12 @@ function PokemonComparison() {
           {/* Radar Chart */}
           <div className="my-[40px]">
             <h3 className="text-center text-pokemon-dark text-[1.8em] mb-5">Stats Comparison (Percentile)</h3>
-            <ResponsiveContainer width="100%" height={500}>
-              <RadarChart data={comparisonData.chartData}>
+            <div className="relative" style={{ height: 500 }}>
+              <div className="absolute inset-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={comparisonData.chartData} outerRadius="75%">
                 <PolarGrid />
-                <PolarAngleAxis dataKey="stat" />
+                <PolarAngleAxis dataKey="stat" tick={{ fontSize: 12 }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} />
                 <Radar
                   name={comparisonData.p1Name}
@@ -245,6 +247,8 @@ function PokemonComparison() {
                 <Legend />
               </RadarChart>
             </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           {/* Stats Comparison Table */}
