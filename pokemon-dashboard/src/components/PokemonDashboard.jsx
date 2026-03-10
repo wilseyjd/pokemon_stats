@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import PokemonSelect from './PokemonSelect';
 import { PokemonCardDisplay } from './PokemonCard';
 import { COLORS } from '../colors';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-function EvoLink({ name, onClick }) {
-  if (!name) return <span>None</span>;
-  return (
-    <button
-      className="bg-transparent border-0 p-0 text-pokemon-red cursor-pointer text-[inherit] font-[inherit] underline hover:text-pokemon-red-dark"
-      onClick={() => onClick(name)}
-    >
-      {name}
-    </button>
-  );
+function buildEvolutionChain(data) {
+  const base = data['Base Evolution'];
+  const evolveFrom = data['Evolve From'];
+  const evolveTo = data['Evolve To'];
+  const finalEvo = data['Final Evolution'];
+  const name = data['Name'];
+
+  const chain = [];
+  if (base) chain.push(base);
+  if (evolveFrom && !chain.includes(evolveFrom)) chain.push(evolveFrom);
+  if (!chain.includes(name)) chain.push(name);
+  if (evolveTo && !chain.includes(evolveTo)) chain.push(evolveTo);
+  if (finalEvo && !chain.includes(finalEvo)) chain.push(finalEvo);
+  return chain;
 }
+
 
 function PokemonDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -98,36 +103,30 @@ function PokemonDashboard() {
     image: data.Image,
     stats: stats.map(s => s.value),
     percentiles: stats.map(s => s.percentile),
-    evolve_from: data['Evolve From'],
+    total_stats: stats.reduce((sum, s) => sum + s.value, 0),
+    evo_chain: buildEvolutionChain(data),
     weaknesses: Object.keys(data)
       .filter(k => k.startsWith('Weak to ') && data[k] === true)
       .map(k => k.replace('Weak to ', ''))
       .slice(0, 6),
   });
 
-  const sectionHeadingClass = 'text-pokemon-dark border-b-2 border-pokemon-red pb-[10px] mb-5';
-
   return (
-    <div className="max-w-[1400px] mx-auto p-5">
-      <header className="text-center mb-[30px]">
-        <h1 className="text-pokemon-dark mb-5">Pokemon Dashboard</h1>
-
-        <div className="flex gap-[15px] justify-center items-center">
-          <PokemonSelect
-            id="pokemon-select"
-            value={selectedPokemon}
-            options={allPokemon}
-            onChange={setSelectedPokemon}
-          />
-
-          <button
-            onClick={handleRandomPokemon}
-            className="py-[10px] px-5 text-base bg-pokemon-red text-white border-0 rounded-[5px] cursor-pointer transition-colors duration-300 hover:bg-pokemon-red-dark"
-          >
-            Random Pokemon
-          </button>
-        </div>
-      </header>
+    <div className="max-w-[1400px] mx-auto">
+      <div className="flex gap-[10px] items-center mb-5">
+        <PokemonSelect
+          id="pokemon-select"
+          value={selectedPokemon}
+          options={allPokemon}
+          onChange={setSelectedPokemon}
+        />
+        <button
+          onClick={handleRandomPokemon}
+          className="py-[10px] px-5 text-base bg-pokemon-red text-white border-0 rounded-[5px] cursor-pointer transition-colors duration-300 hover:bg-pokemon-red-dark"
+        >
+          Random
+        </button>
+      </div>
 
       {error && (
         <div className="bg-pokemon-red-light border border-pokemon-red rounded-[8px] text-pokemon-red-dark py-[14px] px-5 mb-5 text-base" role="alert">
@@ -144,22 +143,22 @@ function PokemonDashboard() {
 
       {!loading && !error && pokemonData && statsData && (
         <div className="bg-white rounded-[10px] shadow-[0_4px_6px_rgba(0,0,0,0.1)] p-[30px]">
-          <div className="max-w-[360px] mx-auto mb-4">
-            <PokemonCardDisplay
-              pokemon={buildCardPokemon(pokemonData, statsData)}
-              statLabels={statsData.map(s => s.stat)}
-              accentColor={COLORS.red}
-              onEvoClick={setSelectedPokemon}
-            />
-          </div>
+          <div className="flex gap-[30px] items-stretch max-[768px]:flex-col">
+            <div className="w-[360px] shrink-0 max-[768px]:w-full max-[768px]:max-w-[360px] max-[768px]:mx-auto">
+              <PokemonCardDisplay
+                pokemon={buildCardPokemon(pokemonData, statsData)}
+                statLabels={statsData.map(s => s.stat)}
+                accentColor={COLORS.red}
+                onEvoClick={setSelectedPokemon}
+              />
+            </div>
 
-          <div className="grid grid-cols-[1.5fr_1fr] max-[968px]:grid-cols-1 gap-[30px] mt-[30px]">
-            <div>
-              <h3 className={sectionHeadingClass}>Stats (Percentile)</h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <RadarChart data={statsData}>
+            <div className="flex-1 min-h-[540px] relative">
+              <div className="absolute inset-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={statsData} outerRadius="75%">
                   <PolarGrid />
-                  <PolarAngleAxis dataKey="stat" />
+                  <PolarAngleAxis dataKey="stat" tick={{ fontSize: 12 }} />
                   <PolarRadiusAxis angle={90} domain={[0, 100]} />
                   <Radar
                     name="Percentile"
@@ -168,74 +167,21 @@ function PokemonDashboard() {
                     fill={COLORS.red}
                     fillOpacity={0.5}
                   />
-                  <Legend />
+                  <Tooltip
+                    formatter={(value, name, props) => [`${value.toFixed(1)}%`, props.payload.stat]}
+                    contentStyle={{
+                      backgroundColor: '#2c3e50',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '0.82rem',
+                      padding: '6px 10px',
+                    }}
+                    itemStyle={{ color: '#fff' }}
+                    labelStyle={{ display: 'none' }}
+                  />
                 </RadarChart>
               </ResponsiveContainer>
-
-              <div className="mt-[30px]">
-                <h4 className={sectionHeadingClass}>Detailed Stats</h4>
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-red text-white font-bold">Stat</th>
-                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-red text-white font-bold">Value</th>
-                      <th className="p-[10px] text-left border-b border-pokemon-border bg-pokemon-red text-white font-bold">Percentile</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {statsData.map((stat, idx) => (
-                      <tr key={idx} className="hover:bg-pokemon-surface">
-                        <td className="p-[10px] text-left border-b border-pokemon-border">{stat.stat}</td>
-                        <td className="p-[10px] text-left border-b border-pokemon-border">{stat.value}</td>
-                        <td className="p-[10px] text-left border-b border-pokemon-border">{stat.percentile.toFixed(1)}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div>
-              <div className="bg-pokemon-surface p-5 rounded-[8px] mb-5">
-                <h3 className={sectionHeadingClass}>Evolution Chain</h3>
-                <table className="w-full border-collapse">
-                  <tbody>
-                    <tr>
-                      <td className="py-2 px-[5px]"><strong>Base Evolution:</strong></td>
-                      <td className="py-2 px-[5px]"><EvoLink name={pokemonData['Base Evolution']} onClick={setSelectedPokemon} /></td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-[5px]"><strong>Evolves From:</strong></td>
-                      <td className="py-2 px-[5px]"><EvoLink name={pokemonData['Evolve From']} onClick={setSelectedPokemon} /></td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-[5px]"><strong>Evolves To:</strong></td>
-                      <td className="py-2 px-[5px]"><EvoLink name={pokemonData['Evolve To']} onClick={setSelectedPokemon} /></td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-[5px]"><strong>Final Evolution:</strong></td>
-                      <td className="py-2 px-[5px]"><EvoLink name={pokemonData['Final Evolution']} onClick={setSelectedPokemon} /></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="bg-pokemon-surface p-5 rounded-[8px] mb-5">
-                <h3 className={sectionHeadingClass}>Additional Info</h3>
-                <table className="w-full border-collapse">
-                  <tbody>
-                    <tr>
-                      <td className="py-2 px-[5px]"><strong>Total Stats:</strong></td>
-                      <td className="py-2 px-[5px]">{statsData.reduce((sum, s) => sum + s.value, 0)}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-[5px]"><strong>Avg Percentile:</strong></td>
-                      <td className="py-2 px-[5px]">
-                        {(statsData.reduce((sum, s) => sum + s.percentile, 0) / statsData.length).toFixed(1)}%
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 export const TYPE_COLORS = {
   Normal: '#A8A878', Fire: '#F08030', Water: '#6890F0',
   Electric: '#F8D030', Grass: '#78C850', Ice: '#98D8D8',
@@ -23,7 +24,7 @@ export function displayType(type) {
 
 // Expected pokemon shape:
 //   name, pokedex_number, type1, type2, image,
-//   stats[],  percentiles[], evolve_from, weaknesses[]
+//   stats[], percentiles[], total_stats, evo_chain[], weaknesses[]
 export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClick, className = '' }) {
   const headerBg = accentColor;
   return (
@@ -36,16 +37,29 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
         style={{ backgroundColor: headerBg }}
       >
         <div className="flex justify-between items-center mb-1">
-          {pokemon.evolve_from
-            ? <button
-                className="bg-black/20 border-0 py-[2px] px-[6px] text-white/90 cursor-pointer text-[0.78em] font-[inherit] rounded-[4px] transition-colors hover:bg-black/35 hover:text-white"
-                onClick={() => onEvoClick(pokemon.evolve_from)}
-              >
-                ‹ {pokemon.evolve_from}
-              </button>
-            : <span />
-          }
-          <span className="font-bold text-[0.9em]">HP {pokemon.stats[0]}</span>
+          {pokemon.evo_chain && pokemon.evo_chain.length > 1 ? (
+            <div className="flex items-center gap-[4px] flex-wrap">
+              {pokemon.evo_chain.map((pokeName, idx) => (
+                <React.Fragment key={pokeName}>
+                  {idx > 0 && <span className="text-white/60 text-xs">→</span>}
+                  {pokeName === pokemon.name ? (
+                    <span className="font-bold text-[0.78em] text-white">{pokeName}</span>
+                  ) : (
+                    <button
+                      className="bg-black/20 border-0 py-[1px] px-[5px] text-white/90 cursor-pointer text-[0.75em] font-[inherit] rounded-[3px] transition-colors hover:bg-black/35 hover:text-white"
+                      onClick={() => onEvoClick(pokeName)}
+                    >
+                      {pokeName}
+                    </button>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          ) : <span />}
+          <div className="text-right">
+            <div className="text-[0.62em] text-white/70 uppercase tracking-[0.06em]">Total Stats</div>
+            <div className="font-black text-[1em]">{pokemon.total_stats}</div>
+          </div>
         </div>
         <h2 className="text-[1.6em] mb-[2px] text-white">{pokemon.name}</h2>
         <p className="m-0 text-[0.8em] text-white/85">#{String(pokemon.pokedex_number).padStart(4, '0')}</p>
@@ -106,6 +120,7 @@ export function PokemonCardDisplay({ pokemon, statLabels, accentColor, onEvoClic
           </div>
         </div>
       )}
+
     </div>
   );
 }
